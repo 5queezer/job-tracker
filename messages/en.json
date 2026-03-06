@@ -1,0 +1,83 @@
+{
+  "app": {
+    "title": "Job Tracker",
+    "subtitle": "Your applications at a glance"
+  },
+  "nav": {
+    "logout": "Sign out",
+    "table_view": "Table",
+    "kanban_view": "Kanban"
+  },
+  "stats": {
+    "total": "Total",
+    "active": "Active",
+    "offers": "Offers",
+    "ghosted": "Ghosted"
+  },
+  "actions": {
+    "new_application": "New Application",
+    "export_csv": "CSV Export",
+    "filter_reset": "Clear filters",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "add": "Add",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "search": "Search...",
+    "all_statuses": "All statuses"
+  },
+  "table": {
+    "company": "Company",
+    "role": "Role",
+    "status": "Status",
+    "applied_at": "Applied",
+    "last_contact": "Last Contact",
+    "follow_up": "Follow-up",
+    "notes": "Notes",
+    "count": "{filtered} of {total} applications",
+    "empty": "No applications found."
+  },
+  "modal": {
+    "title_new": "New Application",
+    "title_edit": "Edit Application",
+    "company": "Company",
+    "company_placeholder": "e.g. Google",
+    "role": "Role",
+    "role_placeholder": "e.g. Senior Engineer",
+    "status": "Status",
+    "applied_at": "Applied on",
+    "last_contact": "Last Contact",
+    "follow_up": "Follow-up Date",
+    "notes": "Notes",
+    "notes_placeholder": "Contact person, details, links...",
+    "required": "*",
+    "required_fields_error": "Company and role are required.",
+    "error_create": "Failed to create application.",
+    "error_update": "Failed to update application."
+  },
+  "status": {
+    "applied": "Applied",
+    "waiting": "Waiting",
+    "interview": "Interview",
+    "rejected": "Rejected",
+    "offer": "Offer",
+    "ghost": "Ghosted",
+    "draft": "Draft"
+  },
+  "kanban": {
+    "empty": "No entries"
+  },
+  "dashboard": {
+    "applications": "Applications",
+    "loading_error": "Failed to load applications."
+  },
+  "confirm": {
+    "delete": "Really delete this application?"
+  },
+  "login": {
+    "button": "Sign in with Google",
+    "subtitle": "Only authorized users can log in.",
+    "error": "Login failed. Please try again."
+  }
+}

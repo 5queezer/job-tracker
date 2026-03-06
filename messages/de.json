@@ -1,0 +1,83 @@
+{
+  "app": {
+    "title": "Job Tracker",
+    "subtitle": "Deine Bewerbungen im Überblick"
+  },
+  "nav": {
+    "logout": "Abmelden",
+    "table_view": "Tabelle",
+    "kanban_view": "Kanban"
+  },
+  "stats": {
+    "total": "Gesamt",
+    "active": "Aktiv",
+    "offers": "Angebote",
+    "ghosted": "Ghosted"
+  },
+  "actions": {
+    "new_application": "Neue Bewerbung",
+    "export_csv": "CSV Export",
+    "filter_reset": "Filter zurücksetzen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "save": "Speichern",
+    "add": "Hinzufügen",
+    "cancel": "Abbrechen",
+    "saving": "Speichern...",
+    "search": "Suchen...",
+    "all_statuses": "Alle Status"
+  },
+  "table": {
+    "company": "Firma",
+    "role": "Stelle",
+    "status": "Status",
+    "applied_at": "Beworben",
+    "last_contact": "Letzter Kontakt",
+    "follow_up": "Follow-up",
+    "notes": "Notizen",
+    "count": "{filtered} von {total} Bewerbungen",
+    "empty": "Keine Bewerbungen gefunden."
+  },
+  "modal": {
+    "title_new": "Neue Bewerbung",
+    "title_edit": "Bewerbung bearbeiten",
+    "company": "Firma",
+    "company_placeholder": "z.B. Google",
+    "role": "Stelle",
+    "role_placeholder": "z.B. Senior Engineer",
+    "status": "Status",
+    "applied_at": "Beworben am",
+    "last_contact": "Letzter Kontakt",
+    "follow_up": "Follow-up Datum",
+    "notes": "Notizen",
+    "notes_placeholder": "Kontaktperson, Details, Links...",
+    "required": "*",
+    "required_fields_error": "Firma und Stelle sind Pflichtfelder.",
+    "error_create": "Fehler beim Erstellen der Bewerbung.",
+    "error_update": "Fehler beim Aktualisieren der Bewerbung."
+  },
+  "status": {
+    "applied": "Beworben",
+    "waiting": "Wartend",
+    "interview": "Interview",
+    "rejected": "Abgelehnt",
+    "offer": "Angebot",
+    "ghost": "Ghosted",
+    "draft": "Entwurf"
+  },
+  "kanban": {
+    "empty": "Keine Einträge"
+  },
+  "dashboard": {
+    "applications": "Bewerbungen",
+    "loading_error": "Fehler beim Laden der Bewerbungen."
+  },
+  "confirm": {
+    "delete": "Bewerbung wirklich löschen?"
+  },
+  "login": {
+    "button": "Mit Google anmelden",
+    "subtitle": "Nur autorisierte Nutzer können sich einloggen.",
+    "error": "Login fehlgeschlagen. Bitte versuche es erneut."
+  }
+}
