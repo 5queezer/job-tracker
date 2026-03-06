@@ -94,8 +94,9 @@
     "delete": "Really delete this application?"
   },
   "login": {
+    "headline": "Your Job Search Cockpit",
+    "subtitle": "Track every application in one place.",
     "button": "Sign in with Google",
-    "subtitle": "Only authorized users can log in.",
     "error": "Login failed. Please try again."
   },
   "share": {

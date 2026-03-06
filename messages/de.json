@@ -94,8 +94,9 @@
     "delete": "Bewerbung wirklich löschen?"
   },
   "login": {
+    "headline": "Dein Bewerbungs-Cockpit",
+    "subtitle": "Behalte den Überblick über alle Bewerbungen.",
     "button": "Mit Google anmelden",
-    "subtitle": "Nur autorisierte Nutzer können sich einloggen.",
     "error": "Login fehlgeschlagen. Bitte versuche es erneut."
   },
   "share": {
