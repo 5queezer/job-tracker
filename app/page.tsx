@@ -9,5 +9,10 @@ export default async function Home() {
     redirect("/login");
   }
 
-  return <Dashboard user={session.user} />;
+  const shareToken = process.env.SHARE_TOKEN ?? "";
+  const shareUrl = shareToken
+    ? `${process.env.BETTER_AUTH_URL ?? ""}/share?token=${shareToken}`
+    : "/share";
+
+  return <Dashboard user={session.user} shareUrl={shareUrl} />;
 }

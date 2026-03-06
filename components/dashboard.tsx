@@ -19,6 +19,7 @@ interface DashboardProps {
     email: string;
     image?: string | null;
   };
+  shareUrl: string;
 }
 
 async function fetchApplications(): Promise<Application[]> {
@@ -59,7 +60,7 @@ function exportToCsv(applications: Application[], filename = "applications.csv")
 
 type ViewMode = "table" | "kanban";
 
-export function Dashboard({ user }: DashboardProps) {
+export function Dashboard({ user, shareUrl }: DashboardProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslations("dashboard");
@@ -161,7 +162,7 @@ export function Dashboard({ user }: DashboardProps) {
                 📁 Dokumente
               </Link>
               <a
-                href="/share"
+                href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center min-h-[44px] px-2 text-sm text-blue-500 hover:text-blue-700 transition-colors"
@@ -213,7 +214,7 @@ export function Dashboard({ user }: DashboardProps) {
               📁 Dokumente
             </Link>
             <a
-              href="/share"
+              href={shareUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 min-h-[44px] px-2 text-sm text-blue-500 hover:text-blue-700 transition-colors"
