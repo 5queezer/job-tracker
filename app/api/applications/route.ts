@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
 
   const applications = await prisma.application.findMany({
     orderBy: { createdAt: "desc" },
+    include: { contacts: true },
   });
   return NextResponse.json(applications);
 }
@@ -21,7 +22,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { company, role, status, appliedAt, lastContact, followUpAt, notes } = body;
+  const { company, role, status, appliedAt, lastContact, followUpAt, notes, jobDescription } = body;
 
   if (!company || !role) {
     return NextResponse.json(
@@ -39,7 +40,9 @@ export async function POST(request: NextRequest) {
       lastContact: lastContact ? new Date(lastContact) : null,
       followUpAt: followUpAt ? new Date(followUpAt) : null,
       notes: notes ? String(notes).slice(0, 10000) : null,
+      jobDescription: jobDescription ? String(jobDescription).slice(0, 50000) : null,
     },
+    include: { contacts: true },
   });
 
   return NextResponse.json(application, { status: 201 });

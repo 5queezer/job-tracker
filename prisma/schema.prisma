@@ -8,17 +8,31 @@ datasource db {
 }
 
 model Application {
-  id          Int       @id @default(autoincrement())
-  company     String
-  role        String
-  status      String    @default("applied")
-  appliedAt   DateTime?
-  lastContact DateTime?
-  notes       String?
-  followUpAt  DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  documents   Document[]
+  id              Int       @id @default(autoincrement())
+  company         String
+  role            String
+  status          String    @default("applied")
+  appliedAt       DateTime?
+  lastContact     DateTime?
+  notes           String?
+  followUpAt      DateTime?
+  jobDescription  String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  documents       Document[]
+  contacts        Contact[]
+}
+
+model Contact {
+  id            Int         @id @default(autoincrement())
+  name          String
+  email         String?
+  phone         String?
+  role          String?
+  linkedIn      String?
+  applicationId Int
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
 }
 
 model Document {

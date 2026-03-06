@@ -19,6 +19,7 @@ export async function GET(
 
   const application = await prisma.application.findUnique({
     where: { id: numericId },
+    include: { contacts: true },
   });
 
   if (!application) {
@@ -44,7 +45,7 @@ export async function PATCH(
   }
 
   const body = await request.json();
-  const { company, role, status, appliedAt, lastContact, followUpAt, notes } = body;
+  const { company, role, status, appliedAt, lastContact, followUpAt, notes, jobDescription } = body;
 
   const application = await prisma.application.update({
     where: { id: numericId },
@@ -62,7 +63,11 @@ export async function PATCH(
         followUpAt: followUpAt ? new Date(followUpAt) : null,
       }),
       ...(notes !== undefined && { notes: notes ? String(notes).slice(0, 10000) : null }),
+      ...(jobDescription !== undefined && {
+        jobDescription: jobDescription ? String(jobDescription).slice(0, 50000) : null,
+      }),
     },
+    include: { contacts: true },
   });
 
   return NextResponse.json(application);

@@ -12,7 +12,7 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Application, ApplicationStatus, STATUS_COLORS, STATUS_ROW_COLORS, STATUS_ORDER } from "@/types";
+import { Application, ApplicationStatus, Contact, STATUS_COLORS, STATUS_ROW_COLORS, STATUS_ORDER } from "@/types";
 import { format, isPast, isToday } from "date-fns";
 import { de, enUS } from "date-fns/locale";
 import { useLocale } from "next-intl";
@@ -27,6 +27,24 @@ function StatusBadge({ status }: { status: ApplicationStatus }) {
     >
       {t(status)}
     </span>
+  );
+}
+
+function ContactPills({ contacts }: { contacts?: Contact[] }) {
+  if (!contacts || contacts.length === 0) return <span className="text-gray-400">—</span>;
+  return (
+    <div className="flex flex-wrap gap-1">
+      {contacts.map((c) => (
+        <span
+          key={c.id}
+          title={[c.role, c.email].filter(Boolean).join(" · ")}
+          className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 whitespace-nowrap"
+        >
+          {c.name}
+          {c.role && <span className="ml-1 text-indigo-500 font-normal">· {c.role}</span>}
+        </span>
+      ))}
+    </div>
   );
 }
 
@@ -117,6 +135,11 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
           {info.getValue() || "—"}
         </span>
       ),
+    }),
+    columnHelper.display({
+      id: "contacts",
+      header: t("contacts"),
+      cell: ({ row }) => <ContactPills contacts={row.original.contacts} />,
     }),
     columnHelper.display({
       id: "actions",

@@ -7,6 +7,17 @@ export type ApplicationStatus =
   | "ghost"
   | "draft";
 
+export interface Contact {
+  id: number;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  role: string | null;
+  linkedIn: string | null;
+  applicationId: number;
+  createdAt: string;
+}
+
 export interface Application {
   id: number;
   company: string;
@@ -16,8 +27,10 @@ export interface Application {
   lastContact: string | null;
   followUpAt: string | null;
   notes: string | null;
+  jobDescription: string | null;
   createdAt: string;
   updatedAt: string;
+  contacts?: Contact[];
 }
 
 // Color mapping per status — labels come from i18n translations
