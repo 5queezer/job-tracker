@@ -159,6 +159,13 @@ export function Dashboard({ user }: DashboardProps) {
               >
                 📁 Dokumente
               </Link>
+              <Link
+                href="/share"
+                className="text-sm text-blue-500 hover:text-blue-700 transition-colors"
+                title="Readonly link for family/AMS"
+              >
+                🔗 Share
+              </Link>
               <button
                 onClick={handleLogout}
                 className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
