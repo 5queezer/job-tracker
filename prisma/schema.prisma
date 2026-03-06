@@ -18,6 +18,17 @@ model Application {
   followUpAt  DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  documents   Document[]
+}
+
+model Document {
+  id           Int           @id @default(autoincrement())
+  filename     String        // stored filename on disk (uuid-based)
+  originalName String        // user-facing name
+  size         Int           // bytes
+  mimeType     String
+  uploadedAt   DateTime      @default(now())
+  applications Application[]
 }
 
 model User {

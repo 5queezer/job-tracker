@@ -10,6 +10,7 @@ import { KanbanView } from "./kanban-view";
 import { LanguageSwitcher } from "./language-switcher";
 import { Application, ApplicationStatus } from "@/types";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { format } from "date-fns";
 
 interface DashboardProps {
@@ -152,6 +153,12 @@ export function Dashboard({ user }: DashboardProps) {
               <span className="text-sm text-gray-600 hidden sm:block">
                 {user.name || user.email}
               </span>
+              <Link
+                href="/documents"
+                className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                📁 Dokumente
+              </Link>
               <button
                 onClick={handleLogout}
                 className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
