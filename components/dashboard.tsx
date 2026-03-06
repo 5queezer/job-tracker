@@ -159,13 +159,15 @@ export function Dashboard({ user }: DashboardProps) {
               >
                 📁 Dokumente
               </Link>
-              <Link
-                href="/share"
+              <a
+                href={process.env.NEXT_PUBLIC_SHARE_URL || "/share"}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-sm text-blue-500 hover:text-blue-700 transition-colors"
                 title="Readonly link for family/AMS"
               >
                 🔗 Share
-              </Link>
+              </a>
               <button
                 onClick={handleLogout}
                 className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
