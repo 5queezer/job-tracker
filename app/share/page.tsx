@@ -19,7 +19,7 @@ type Lang = "de" | "en";
 
 const TRANSLATIONS = {
   de: {
-    title: "Bewerbungen von Christian Pojoni",
+    title: (name: string | null) => name ? `Bewerbungen von ${name}` : "Bewerbungsübersicht",
     subtitle: "Read-only Ansicht",
     readOnly: "Lesezugriff",
     stats: {
@@ -51,7 +51,7 @@ const TRANSLATIONS = {
     footer: (count: number, date: string) =>
       `${count} Bewerbungen gesamt · Zuletzt aktualisiert: ${date} Uhr`,
     readOnlyNote:
-      "Diese Seite ist schreibgeschützt. Nur Christian kann Änderungen vornehmen.",
+      "Diese Seite ist schreibgeschützt. Nur der Eigentümer kann Änderungen vornehmen.",
     docs: {
       heading: "Dokumente",
       empty: "Keine Dokumente vorhanden.",
@@ -59,7 +59,7 @@ const TRANSLATIONS = {
     },
   },
   en: {
-    title: "Job Applications of Christian Pojoni",
+    title: (name: string | null) => name ? `Job Applications of ${name}` : "Job Applications",
     subtitle: "Read-only view",
     readOnly: "Read access",
     stats: {
@@ -91,7 +91,7 @@ const TRANSLATIONS = {
     footer: (count: number, date: string) =>
       `${count} applications total · Last updated: ${date}`,
     readOnlyNote:
-      "This is a read-only view. Only Christian can make changes.",
+      "This is a read-only view. Only the owner can make changes.",
     docs: {
       heading: "Documents",
       empty: "No documents available.",
@@ -209,6 +209,12 @@ export default async function SharePage({ searchParams }: SharePageProps) {
     orderBy: { createdAt: "desc" },
   });
 
+  // Get owner name dynamically from first application's user, or fall back to generic
+  const ownerUser = applications[0]?.userId
+    ? await prisma.user.findUnique({ where: { id: applications[0].userId }, select: { name: true } })
+    : null;
+  const ownerName = ownerUser?.name ?? null;
+
   const documents = await prisma.document.findMany({
     orderBy: { uploadedAt: "desc" },
     select: { id: true, originalName: true, mimeType: true, size: true, uploadedAt: true },
@@ -242,7 +248,7 @@ export default async function SharePage({ searchParams }: SharePageProps) {
             <div className="flex items-center gap-3">
               <span className="text-2xl">💼</span>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
+                <h1 className="text-xl font-bold text-gray-900">{t.title(ownerName)}</h1>
                 <p className="text-xs text-gray-500">{t.subtitle}</p>
               </div>
             </div>
