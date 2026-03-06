@@ -188,3 +188,14 @@ function StatCard({
     </div>
   );
 }
+
+export const metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
+};
