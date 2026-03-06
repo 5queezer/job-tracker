@@ -2,10 +2,13 @@
 
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations();
 
   async function handleGoogleLogin() {
     setLoading(true);
@@ -16,18 +19,23 @@ export default function LoginPage() {
         callbackURL: "/",
       });
     } catch {
-      setError("Login fehlgeschlagen. Bitte versuche es erneut.");
+      setError(t("login.error"));
       setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
       <div className="bg-white rounded-2xl shadow-2xl p-10 w-full max-w-md text-center">
         <div className="mb-8">
           <div className="text-5xl mb-4">💼</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Job Tracker</h1>
-          <p className="text-gray-500">Deine Bewerbungen im Überblick</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            {t("app.title")}
+          </h1>
+          <p className="text-gray-500">{t("app.subtitle")}</p>
         </div>
 
         {error && (
@@ -63,12 +71,10 @@ export default function LoginPage() {
               />
             </svg>
           )}
-          Mit Google anmelden
+          {t("login.button")}
         </button>
 
-        <p className="mt-6 text-xs text-gray-400">
-          Nur autorisierte Nutzer können sich einloggen.
-        </p>
+        <p className="mt-6 text-xs text-gray-400">{t("login.subtitle")}</p>
       </div>
     </div>
   );
