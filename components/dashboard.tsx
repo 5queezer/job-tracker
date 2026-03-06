@@ -259,12 +259,12 @@ export function Dashboard({ user }: DashboardProps) {
               {t("applications")} ({applications.length})
             </h2>
           </div>
-          <div className="flex items-center gap-2">
-            {/* View toggle */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* View toggle — row 1 on mobile */}
             <div className="flex items-center rounded-lg border border-gray-200 overflow-hidden text-sm">
               <button
                 onClick={() => setViewMode("table")}
-                className={`px-3 py-1.5 font-medium transition-colors ${
+                className={`px-3 py-1.5 font-medium transition-colors whitespace-nowrap ${
                   viewMode === "table"
                     ? "bg-blue-600 text-white"
                     : "text-gray-600 hover:bg-gray-50"
@@ -274,7 +274,7 @@ export function Dashboard({ user }: DashboardProps) {
               </button>
               <button
                 onClick={() => setViewMode("kanban")}
-                className={`px-3 py-1.5 font-medium transition-colors ${
+                className={`px-3 py-1.5 font-medium transition-colors whitespace-nowrap ${
                   viewMode === "kanban"
                     ? "bg-blue-600 text-white"
                     : "text-gray-600 hover:bg-gray-50"
@@ -284,24 +284,27 @@ export function Dashboard({ user }: DashboardProps) {
               </button>
             </div>
 
-            {/* CSV Export */}
-            <button
-              onClick={() => exportToCsv(applications)}
-              title={ta("export_csv")}
-              className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
-            >
-              <span>↓</span>
-              {ta("export_csv")}
-            </button>
+            {/* Actions — row 2 on mobile */}
+            <div className="flex items-center gap-2 ml-auto">
+              {/* CSV Export */}
+              <button
+                onClick={() => exportToCsv(applications)}
+                title={ta("export_csv")}
+                className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors whitespace-nowrap"
+              >
+                <span>↓</span>
+                {ta("export_csv")}
+              </button>
 
-            {/* New application */}
-            <button
-              onClick={handleNewApplication}
-              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
-            >
-              <span>+</span>
-              {ta("new_application")}
-            </button>
+              {/* New application */}
+              <button
+                onClick={handleNewApplication}
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm whitespace-nowrap"
+              >
+                <span>+</span>
+                {ta("new_application")}
+              </button>
+            </div>
           </div>
         </div>
 
