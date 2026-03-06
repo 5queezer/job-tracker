@@ -2,166 +2,116 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ApplicationStatus, STATUS_COLORS } from "@/types";
 import { format } from "date-fns";
-import { de } from "date-fns/locale";
+import type { Locale } from "date-fns";
+import { de, enUS } from "date-fns/locale";
 
-interface SharePageProps {
-  searchParams: Promise<{ token?: string }>;
+// ── Translations ──────────────────────────────────────────────────────────────
+
+type Lang = "de" | "en";
+
+const TRANSLATIONS = {
+  de: {
+    title: "Bewerbungen von Christian Pojoni",
+    subtitle: "Read-only Ansicht",
+    readOnly: "Lesezugriff",
+    stats: {
+      total: "Gesamt",
+      active: "Aktiv",
+      offers: "Angebote",
+      rejected: "Abgelehnt",
+    },
+    table: {
+      heading: "Bewerbungen",
+      company: "Firma",
+      role: "Stelle",
+      status: "Status",
+      applied: "Beworben",
+      lastContact: "Letzter Kontakt",
+      followUp: "Follow-up",
+      notes: "Notizen",
+      empty: "Noch keine Bewerbungen eingetragen.",
+    },
+    status: {
+      applied: "Beworben",
+      waiting: "Wartend",
+      interview: "Interview",
+      rejected: "Abgelehnt",
+      offer: "Angebot",
+      ghost: "Ghosted",
+      draft: "Entwurf",
+    },
+    footer: (count: number, date: string) =>
+      `${count} Bewerbungen gesamt · Zuletzt aktualisiert: ${date} Uhr`,
+    readOnlyNote:
+      "Diese Seite ist schreibgeschützt. Nur Christian kann Änderungen vornehmen.",
+  },
+  en: {
+    title: "Job Applications of Christian Pojoni",
+    subtitle: "Read-only view",
+    readOnly: "Read access",
+    stats: {
+      total: "Total",
+      active: "Active",
+      offers: "Offers",
+      rejected: "Rejected",
+    },
+    table: {
+      heading: "Applications",
+      company: "Company",
+      role: "Role",
+      status: "Status",
+      applied: "Applied",
+      lastContact: "Last Contact",
+      followUp: "Follow-up",
+      notes: "Notes",
+      empty: "No applications yet.",
+    },
+    status: {
+      applied: "Applied",
+      waiting: "Waiting",
+      interview: "Interview",
+      rejected: "Rejected",
+      offer: "Offer",
+      ghost: "Ghosted",
+      draft: "Draft",
+    },
+    footer: (count: number, date: string) =>
+      `${count} applications total · Last updated: ${date}`,
+    readOnlyNote:
+      "This is a read-only view. Only Christian can make changes.",
+  },
+} satisfies Record<Lang, unknown>;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function resolveLang(raw: string | undefined): Lang {
+  return raw === "en" ? "en" : "de";
 }
 
-function StatusBadge({ status }: { status: ApplicationStatus }) {
-  const labels: Record<ApplicationStatus, string> = {
-    applied: "Beworben",
-    waiting: "Wartend",
-    interview: "Interview",
-    rejected: "Abgelehnt",
-    offer: "Angebot",
-    ghost: "Ghosted",
-    draft: "Entwurf",
-  };
-  return (
-    <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[status] || "bg-gray-100 text-gray-600"}`}
-    >
-      {labels[status] ?? status}
-    </span>
-  );
-}
-
-function formatDate(dateVal: Date | string | null): string {
+function formatDate(dateVal: Date | string | null, locale: Locale): string {
   if (!dateVal) return "—";
   try {
-    return format(new Date(dateVal), "dd.MM.yyyy", { locale: de });
+    return format(new Date(dateVal), "dd.MM.yyyy", { locale });
   } catch {
     return "—";
   }
 }
 
-export default async function SharePage({ searchParams }: SharePageProps) {
-  const { token } = await searchParams;
-  const expectedToken = process.env.PUBLIC_READ_TOKEN;
+// ── Sub-components ────────────────────────────────────────────────────────────
 
-  if (!expectedToken || !token || token !== expectedToken) {
-    notFound();
-  }
-
-  const applications = await prisma.application.findMany({
-    orderBy: { createdAt: "desc" },
-  });
-
-  const stats = {
-    total: applications.length,
-    active: applications.filter((a) =>
-      ["applied", "waiting", "interview"].includes(a.status)
-    ).length,
-    offers: applications.filter((a) => a.status === "offer").length,
-    rejected: applications.filter((a) => a.status === "rejected").length,
-  };
-
+function StatusBadge({
+  status,
+  labels,
+}: {
+  status: ApplicationStatus;
+  labels: Record<string, string>;
+}) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">💼</span>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Job Tracker</h1>
-                <p className="text-xs text-gray-500">Read-only Ansicht</p>
-              </div>
-            </div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
-              Lesezugriff
-            </span>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          <StatCard label="Gesamt" value={stats.total} color="blue" />
-          <StatCard label="Aktiv" value={stats.active} color="yellow" />
-          <StatCard label="Angebote" value={stats.offers} color="green" />
-          <StatCard label="Abgelehnt" value={stats.rejected} color="gray" />
-        </div>
-
-        {/* Table */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Bewerbungen ({applications.length})
-            </h2>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  {["Firma", "Stelle", "Status", "Beworben", "Letzter Kontakt", "Follow-up", "Notizen"].map(
-                    (h) => (
-                      <th
-                        key={h}
-                        className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3"
-                      >
-                        {h}
-                      </th>
-                    )
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {applications.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="text-center py-12 text-gray-400">
-                      Noch keine Bewerbungen eingetragen.
-                    </td>
-                  </tr>
-                ) : (
-                  applications.map((app) => (
-                    <tr
-                      key={app.id}
-                      className="border-b border-gray-50 hover:bg-blue-50/30 transition-colors"
-                    >
-                      <td className="px-4 py-3 font-medium text-gray-900">{app.company}</td>
-                      <td className="px-4 py-3 text-gray-700">{app.role}</td>
-                      <td className="px-4 py-3">
-                        <StatusBadge status={app.status as ApplicationStatus} />
-                      </td>
-                      <td className="px-4 py-3 text-gray-500 text-sm">
-                        {formatDate(app.appliedAt)}
-                      </td>
-                      <td className="px-4 py-3 text-gray-500 text-sm">
-                        {formatDate(app.lastContact)}
-                      </td>
-                      <td className="px-4 py-3 text-gray-500 text-sm">
-                        {formatDate(app.followUpAt)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className="text-gray-500 text-sm max-w-xs truncate block"
-                          title={app.notes || ""}
-                        >
-                          {app.notes || "—"}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-          <div className="px-4 py-3 border-t border-gray-100 text-xs text-gray-400">
-            {applications.length} Bewerbungen gesamt · Zuletzt aktualisiert:{" "}
-            {format(new Date(), "dd.MM.yyyy HH:mm", { locale: de })} Uhr
-          </div>
-        </div>
-
-        <p className="text-center text-xs text-gray-400 mt-6">
-          Diese Seite ist schreibgeschützt. Nur Christian kann Änderungen vornehmen.
-        </p>
-      </main>
-    </div>
+    <span
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[status] ?? "bg-gray-100 text-gray-600"}`}
+    >
+      {labels[status] ?? status}
+    </span>
   );
 }
 
@@ -180,7 +130,6 @@ function StatCard({
     green: "bg-green-50 text-green-700",
     gray: "bg-gray-100 text-gray-600",
   };
-
   return (
     <div className={`${colors[color]} rounded-xl p-4 text-center`}>
       <div className="text-3xl font-bold">{value}</div>
@@ -189,13 +138,186 @@ function StatCard({
   );
 }
 
+function LangToggle({
+  current,
+  token,
+}: {
+  current: Lang;
+  token: string;
+}) {
+  const other: Lang = current === "de" ? "en" : "de";
+  return (
+    <a
+      href={`/share?token=${token}&lang=${other}`}
+      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-sm font-medium text-gray-600 transition-colors"
+      title={other === "en" ? "Switch to English" : "Auf Deutsch wechseln"}
+    >
+      {other === "en" ? "🇬🇧 EN" : "🇦🇹 DE"}
+    </a>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+
+interface SharePageProps {
+  searchParams: Promise<{ token?: string; lang?: string }>;
+}
+
+export default async function SharePage({ searchParams }: SharePageProps) {
+  const { token, lang: langParam } = await searchParams;
+  const expectedToken = process.env.PUBLIC_READ_TOKEN;
+
+  if (!expectedToken || !token || token !== expectedToken) {
+    notFound();
+  }
+
+  const lang = resolveLang(langParam);
+  const t = TRANSLATIONS[lang];
+  const dateLocale = lang === "de" ? de : enUS;
+
+  const applications = await prisma.application.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+
+  const stats = {
+    total: applications.length,
+    active: applications.filter((a) =>
+      ["applied", "waiting", "interview"].includes(a.status)
+    ).length,
+    offers: applications.filter((a) => a.status === "offer").length,
+    rejected: applications.filter((a) => a.status === "rejected").length,
+  };
+
+  const tableHeaders = [
+    t.table.company,
+    t.table.role,
+    t.table.status,
+    t.table.applied,
+    t.table.lastContact,
+    t.table.followUp,
+    t.table.notes,
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">💼</span>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">{t.title}</h1>
+                <p className="text-xs text-gray-500">{t.subtitle}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <LangToggle current={lang} token={token} />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+                {t.readOnly}
+              </span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Stats */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+          <StatCard label={t.stats.total} value={stats.total} color="blue" />
+          <StatCard label={t.stats.active} value={stats.active} color="yellow" />
+          <StatCard label={t.stats.offers} value={stats.offers} color="green" />
+          <StatCard label={t.stats.rejected} value={stats.rejected} color="gray" />
+        </div>
+
+        {/* Table */}
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100">
+            <h2 className="text-lg font-semibold text-gray-900">
+              {t.table.heading} ({applications.length})
+            </h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-100">
+                  {tableHeaders.map((h) => (
+                    <th
+                      key={h}
+                      className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {applications.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="text-center py-12 text-gray-400">
+                      {t.table.empty}
+                    </td>
+                  </tr>
+                ) : (
+                  applications.map((app) => (
+                    <tr
+                      key={app.id}
+                      className="border-b border-gray-50 hover:bg-blue-50/30 transition-colors"
+                    >
+                      <td className="px-4 py-3 font-medium text-gray-900">
+                        {app.company}
+                      </td>
+                      <td className="px-4 py-3 text-gray-700">{app.role}</td>
+                      <td className="px-4 py-3">
+                        <StatusBadge
+                          status={app.status as ApplicationStatus}
+                          labels={t.status}
+                        />
+                      </td>
+                      <td className="px-4 py-3 text-gray-500 text-sm">
+                        {formatDate(app.appliedAt, dateLocale)}
+                      </td>
+                      <td className="px-4 py-3 text-gray-500 text-sm">
+                        {formatDate(app.lastContact, dateLocale)}
+                      </td>
+                      <td className="px-4 py-3 text-gray-500 text-sm">
+                        {formatDate(app.followUpAt, dateLocale)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className="text-gray-500 text-sm max-w-xs truncate block"
+                          title={app.notes || ""}
+                        >
+                          {app.notes || "—"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+          <div className="px-4 py-3 border-t border-gray-100 text-xs text-gray-400">
+            {t.footer(
+              applications.length,
+              format(new Date(), "dd.MM.yyyy HH:mm", { locale: dateLocale })
+            )}
+          </div>
+        </div>
+
+        <p className="text-center text-xs text-gray-400 mt-6">
+          {t.readOnlyNote}
+        </p>
+      </main>
+    </div>
+  );
+}
+
 export const metadata = {
   robots: {
     index: false,
     follow: false,
-    googleBot: {
-      index: false,
-      follow: false,
-    },
+    googleBot: { index: false, follow: false },
   },
 };

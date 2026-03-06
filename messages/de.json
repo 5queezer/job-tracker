@@ -79,5 +79,37 @@
     "button": "Mit Google anmelden",
     "subtitle": "Nur autorisierte Nutzer können sich einloggen.",
     "error": "Login fehlgeschlagen. Bitte versuche es erneut."
+  },
+  "share": {
+    "title": "Bewerbungen von Christian Pojoni",
+    "subtitle": "Read-only Ansicht",
+    "read_only_badge": "Lesezugriff",
+    "stats": {
+      "total": "Gesamt",
+      "active": "Aktiv",
+      "offers": "Angebote",
+      "rejected": "Abgelehnt"
+    },
+    "table": {
+      "heading": "Bewerbungen",
+      "company": "Firma",
+      "role": "Stelle",
+      "status": "Status",
+      "applied": "Beworben",
+      "last_contact": "Letzter Kontakt",
+      "follow_up": "Follow-up",
+      "notes": "Notizen",
+      "empty": "Noch keine Bewerbungen eingetragen."
+    },
+    "status": {
+      "applied": "Beworben",
+      "waiting": "Wartend",
+      "interview": "Interview",
+      "rejected": "Abgelehnt",
+      "offer": "Angebot",
+      "ghost": "Ghosted",
+      "draft": "Entwurf"
+    },
+    "footer_note": "Dies ist eine schreibgeschützte Ansicht. Nur Christian kann Änderungen vornehmen."
   }
 }

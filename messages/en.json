@@ -79,5 +79,37 @@
     "button": "Sign in with Google",
     "subtitle": "Only authorized users can log in.",
     "error": "Login failed. Please try again."
+  },
+  "share": {
+    "title": "Job Applications of Christian Pojoni",
+    "subtitle": "Read-only view",
+    "read_only_badge": "Read access",
+    "stats": {
+      "total": "Total",
+      "active": "Active",
+      "offers": "Offers",
+      "rejected": "Rejected"
+    },
+    "table": {
+      "heading": "Applications",
+      "company": "Company",
+      "role": "Role",
+      "status": "Status",
+      "applied": "Applied",
+      "last_contact": "Last Contact",
+      "follow_up": "Follow-up",
+      "notes": "Notes",
+      "empty": "No applications yet."
+    },
+    "status": {
+      "applied": "Applied",
+      "waiting": "Waiting",
+      "interview": "Interview",
+      "rejected": "Rejected",
+      "offer": "Offer",
+      "ghost": "Ghosted",
+      "draft": "Draft"
+    },
+    "footer_note": "This is a read-only view. Only Christian can make changes."
   }
 }
