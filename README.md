@@ -1,37 +1,63 @@
-# 📋 Job Tracker
+# Job Tracker
 
-A personal job application tracker built with modern fullstack tooling. Track your applications, visualize progress in Kanban view, and never miss a follow-up.
+A personal job application tracker built with modern fullstack tooling. Track applications, manage contacts and documents, visualize progress in Kanban view, and never miss a follow-up.
 
 **Live:** [jobs.vasudev.xyz](https://jobs.vasudev.xyz)
 
 ---
 
-## ✨ Features
+## Features
 
-- **Table View** — sortable, filterable applications list with status color coding
-- **Kanban View** — drag & drop cards between status columns with optimistic UI updates
-- **Follow-up Dates** — set reminders per application, get overdue alerts
-- **Quick Stats** — at-a-glance count by status
-- **CSV Export** — one-click export, Excel-compatible
+- **Table & Kanban Views** — sortable, filterable table or drag & drop Kanban board with optimistic updates
+- **Follow-up Reminders** — set dates per application, get overdue alerts
+- **Contact Management** — track contacts per application (name, role, email, LinkedIn)
+- **Document Storage** — upload PDFs and images, link to applications, shareable download links
+- **Share Page** — read-only public view for family/AMS with token-based access
+- **Dark / Light / System Theme** — three-way toggle, persisted in localStorage, no flash on load
 - **DE/EN Language Switcher** — full i18n via next-intl
+- **CSV Export** — one-click export, Excel-compatible
+- **Quick Stats** — at-a-glance count by status
 - **Google OAuth** — secure login, single-user access
+- **API Docs** — OpenAPI 3.1 spec with Swagger UI at `/api-docs`
 
-## 🛠 Tech Stack
+## Tech Stack
 
-- **[Next.js 16](https://nextjs.org)** — App Router, SSR, Standalone
-- **[TanStack Table v8](https://tanstack.com/table)** — headless table with sort & filter
-- **[TanStack Query v5](https://tanstack.com/query)** — data fetching & optimistic updates
-- **[@dnd-kit](https://dndkit.com)** — drag & drop for Kanban
-- **[Prisma 6](https://prisma.io)** + SQLite — database
+- **[Next.js 16](https://nextjs.org)** — App Router, React 19, standalone output
+- **[Prisma 6](https://prisma.io)** + PostgreSQL — database (with swappable adapter layer for Firestore)
 - **[better-auth](https://better-auth.com)** — Google OAuth
+- **[TanStack Table v8](https://tanstack.com/table)** — headless table with sort & filter
+- **[TanStack Query v5](https://tanstack.com/query)** — data fetching & cache
+- **[@dnd-kit](https://dndkit.com)** — drag & drop for Kanban
 - **[next-intl](https://next-intl-docs.vercel.app)** — i18n (DE/EN)
-- **[Tailwind CSS v3](https://tailwindcss.com)** — styling
+- **[Tailwind CSS v3](https://tailwindcss.com)** — styling with class-based dark mode
+- **[Google Cloud Run](https://cloud.google.com/run)** — container hosting
+- **[Google Cloud Storage](https://cloud.google.com/storage)** — file storage (optional, falls back to local filesystem)
+- **[Neon](https://neon.tech)** — serverless PostgreSQL
 
-## 🚀 Self-Hosting
+## Architecture
+
+### Database Adapter Layer
+
+The data layer uses a factory pattern (`lib/db/index.ts`) that switches between backends at runtime via the `DB_PROVIDER` env var:
+
+- **`prisma`** (default) — Prisma ORM with PostgreSQL
+- **`firestore`** — Firebase Admin SDK with Firestore collections
+
+All API routes call `getDb()` which returns a `DatabaseAdapter` interface, making the backend transparent to application code.
+
+### Storage Abstraction
+
+File storage (`lib/storage.ts`) switches between:
+
+- **Google Cloud Storage** — when `GCS_BUCKET` is set
+- **Local filesystem** — default fallback, stores in `uploads/`
+
+## Self-Hosting
 
 ### Prerequisites
 - Node.js 20+
-- A Google OAuth Client ID ([create here](https://console.cloud.google.com/apis/credentials))
+- PostgreSQL database (or [Neon](https://neon.tech) free tier)
+- Google OAuth Client ID ([create here](https://console.cloud.google.com/apis/credentials))
 
 ### Setup
 
@@ -44,28 +70,47 @@ cp .env.example .env
 # Fill in your values in .env
 
 npx prisma db push
-npx prisma db seed
 npm run build
+npm start
 ```
 
 ### Environment Variables
 
 ```env
-DATABASE_URL="file:./prisma/dev.db"
-BETTER_AUTH_SECRET="your-random-secret"
+# Database
+DB_PROVIDER="prisma"                          # "prisma" or "firestore"
+DATABASE_URL="postgresql://user:pass@host/db" # PostgreSQL connection string
+
+# Auth
+BETTER_AUTH_SECRET="$(openssl rand -hex 32)"
 BETTER_AUTH_URL="https://your-domain.com"
 GOOGLE_CLIENT_ID="xxx.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET="GOCSPX-xxx"
 ALLOWED_EMAIL="your@email.com"
+
+# Optional
+GCS_BUCKET="your-bucket"                     # omit for local filesystem storage
+PUBLIC_READ_TOKEN="random-token"             # token for the /share read-only page
 ```
 
-### Deploy
+### Docker
 
 ```bash
-bash deploy.sh
+docker build -t job-tracker .
+docker run -p 8080:8080 --env-file .env job-tracker
 ```
 
-## 📊 Application Statuses
+### GCP Cloud Run (CI/CD)
+
+The repo includes a GitHub Actions workflow (`.github/workflows/deploy-gcp.yml`) that on push to `main`:
+
+1. Builds a Docker image
+2. Pushes to Artifact Registry
+3. Deploys to Cloud Run with secrets from Secret Manager
+
+Uses Workload Identity Federation — no service account keys needed.
+
+## Application Statuses
 
 | Status | Meaning |
 |--------|---------|
