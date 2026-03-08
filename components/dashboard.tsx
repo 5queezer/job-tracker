@@ -347,10 +347,10 @@ function StatCard({
   color: "blue" | "yellow" | "green" | "gray";
 }) {
   const colors = {
-    blue: "bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400",
-    yellow: "bg-yellow-50 text-yellow-700 dark:bg-amber-500/15 dark:text-amber-400",
-    green: "bg-green-50 text-green-700 dark:bg-emerald-500/15 dark:text-emerald-400",
-    gray: "bg-gray-100 text-gray-600 dark:bg-gray-700/40 dark:text-gray-300",
+    blue: "bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+    yellow: "bg-yellow-50 text-yellow-700 dark:bg-amber-500/15 dark:text-amber-300",
+    green: "bg-green-50 text-green-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+    gray: "bg-gray-100 text-gray-600 dark:bg-gray-700/40 dark:text-gray-200",
   };
 
   return (

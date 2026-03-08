@@ -112,13 +112,13 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
     columnHelper.accessor("appliedAt", {
       header: t("applied_at"),
       cell: (info) => (
-        <span className="text-gray-500 dark:text-gray-400 text-sm">{formatDate(info.getValue())}</span>
+        <span className="text-gray-500 dark:text-gray-300 text-sm">{formatDate(info.getValue())}</span>
       ),
     }),
     columnHelper.accessor("lastContact", {
       header: t("last_contact"),
       cell: (info) => (
-        <span className="text-gray-500 dark:text-gray-400 text-sm">{formatDate(info.getValue())}</span>
+        <span className="text-gray-500 dark:text-gray-300 text-sm">{formatDate(info.getValue())}</span>
       ),
     }),
     columnHelper.accessor("followUpAt", {
@@ -129,7 +129,7 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
       header: t("notes"),
       cell: (info) => (
         <span
-          className="text-gray-500 dark:text-gray-400 text-sm max-w-xs truncate block"
+          className="text-gray-500 dark:text-gray-300 text-sm max-w-xs truncate block"
           title={info.getValue() || ""}
         >
           {info.getValue() || "—"}
@@ -229,9 +229,9 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
                   <th
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
-                    className={`text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-4 py-3 ${
+                    className={`text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider px-4 py-3 ${
                       header.column.getCanSort()
-                        ? "cursor-pointer select-none hover:text-gray-700 dark:hover:text-gray-200"
+                        ? "cursor-pointer select-none hover:text-gray-700 dark:hover:text-white"
                         : ""
                     }`}
                   >
