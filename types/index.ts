@@ -28,6 +28,7 @@ export interface Application {
   followUpAt: string | null;
   notes: string | null;
   jobDescription: string | null;
+  resumeId: string | null;
   createdAt: string;
   updatedAt: string;
   contacts?: Contact[];

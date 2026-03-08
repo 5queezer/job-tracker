@@ -11,6 +11,7 @@ export interface ApplicationRecord {
   followUpAt: Date | null;
   notes: string | null;
   jobDescription: string | null;
+  resumeId: string | null;
   createdAt: Date;
   updatedAt: Date;
   contacts?: ContactRecord[];
@@ -72,6 +73,7 @@ export interface UpdateApplicationInput {
   followUpAt?: Date | null;
   notes?: string | null;
   jobDescription?: string | null;
+  resumeId?: string | null;
 }
 
 export interface CreateContactInput {

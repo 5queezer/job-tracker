@@ -72,7 +72,13 @@
     "required_fields_error": "Company and role are required.",
     "error_create": "Failed to create application.",
     "error_update": "Failed to update application.",
-    "error_contact": "Failed to save contact."
+    "error_contact": "Failed to save contact.",
+    "resume_section": "Resume",
+    "resume_tailor": "Create tailored resume",
+    "resume_tailoring": "Creating...",
+    "resume_open": "Open in Reactive Resume",
+    "resume_error": "Failed to create resume.",
+    "resume_not_configured": "Resume integration not configured."
   },
   "status": {
     "applied": "Applied",

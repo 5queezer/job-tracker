@@ -72,7 +72,13 @@
     "required_fields_error": "Firma und Stelle sind Pflichtfelder.",
     "error_create": "Fehler beim Erstellen der Bewerbung.",
     "error_update": "Fehler beim Aktualisieren der Bewerbung.",
-    "error_contact": "Fehler beim Speichern des Kontakts."
+    "error_contact": "Fehler beim Speichern des Kontakts.",
+    "resume_section": "Lebenslauf",
+    "resume_tailor": "Lebenslauf erstellen",
+    "resume_tailoring": "Erstelle...",
+    "resume_open": "In Reactive Resume öffnen",
+    "resume_error": "Fehler beim Erstellen des Lebenslaufs.",
+    "resume_not_configured": "Lebenslauf-Integration nicht konfiguriert."
   },
   "status": {
     "applied": "Beworben",
