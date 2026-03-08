@@ -8,6 +8,7 @@ import { ApplicationTable } from "./application-table";
 import { ApplicationModal } from "./application-modal";
 import { KanbanView } from "./kanban-view";
 import { LanguageSwitcher } from "./language-switcher";
+import { ThemeSwitcher } from "./theme-switcher";
 import { Application, ApplicationStatus } from "@/types";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -133,18 +134,19 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
               <span className="text-2xl">💼</span>
-              <h1 className="text-xl font-bold text-gray-900">{tapp("title")}</h1>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">{tapp("title")}</h1>
             </div>
 
             {/* Desktop nav */}
             <div className="hidden md:flex items-center gap-3">
+              <ThemeSwitcher />
               <LanguageSwitcher />
               {user.image && (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -202,13 +204,13 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
 
         {/* Mobile dropdown menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-100 px-4 py-2 flex flex-col gap-1 bg-white">
-            <div className="py-2 text-sm text-gray-600 font-medium">
+          <div className="md:hidden border-t border-gray-100 dark:border-gray-700 px-4 py-2 flex flex-col gap-1 bg-white dark:bg-gray-800">
+            <div className="py-2 text-sm text-gray-600 dark:text-gray-300 font-medium">
               {user.name || user.email}
             </div>
             <Link
               href="/documents"
-              className="flex items-center gap-2 min-h-[44px] px-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-2 min-h-[44px] px-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
               📁 Dokumente
@@ -217,14 +219,14 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
               href={shareUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 min-h-[44px] px-2 text-sm text-blue-500 hover:text-blue-700 transition-colors"
+              className="flex items-center gap-2 min-h-[44px] px-2 text-sm text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
               onClick={() => setMobileMenuOpen(false)}
             >
               🔗 Share
             </a>
             <button
               onClick={() => { handleLogout(); setMobileMenuOpen(false); }}
-              className="flex items-center gap-2 min-h-[44px] px-2 text-sm text-gray-500 hover:text-gray-700 transition-colors w-full text-left"
+              className="flex items-center gap-2 min-h-[44px] px-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors w-full text-left"
             >
               {tn("logout")}
             </button>
@@ -235,7 +237,7 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Overdue follow-up banner */}
         {overdueFollowUps.length > 0 && (
-          <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2 text-red-700 text-sm">
+          <div className="mb-6 p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800/50 rounded-xl flex items-center gap-2 text-red-700 dark:text-red-400 text-sm">
             <span className="text-base">⚠</span>
             <span>
               {overdueFollowUps.length === 1
@@ -256,19 +258,19 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               {t("applications")} ({applications.length})
             </h2>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {/* View toggle — row 1 on mobile */}
-            <div className="flex items-center rounded-lg border border-gray-200 overflow-hidden text-sm">
+            <div className="flex items-center rounded-lg border border-gray-200 dark:border-gray-600 overflow-hidden text-sm">
               <button
                 onClick={() => setViewMode("table")}
                 className={`px-3 py-1.5 font-medium transition-colors whitespace-nowrap ${
                   viewMode === "table"
                     ? "bg-blue-600 text-white"
-                    : "text-gray-600 hover:bg-gray-50"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }`}
               >
                 {tn("table_view")}
@@ -278,7 +280,7 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
                 className={`px-3 py-1.5 font-medium transition-colors whitespace-nowrap ${
                   viewMode === "kanban"
                     ? "bg-blue-600 text-white"
-                    : "text-gray-600 hover:bg-gray-50"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }`}
               >
                 {tn("kanban_view")}
@@ -291,7 +293,7 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
               <button
                 onClick={() => exportToCsv(applications)}
                 title={ta("export_csv")}
-                className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors whitespace-nowrap"
+                className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
               >
                 <span>↓</span>
                 {ta("export_csv")}
@@ -345,10 +347,10 @@ function StatCard({
   color: "blue" | "yellow" | "green" | "gray";
 }) {
   const colors = {
-    blue: "bg-blue-50 text-blue-700",
-    yellow: "bg-yellow-50 text-yellow-700",
-    green: "bg-green-50 text-green-700",
-    gray: "bg-gray-100 text-gray-600",
+    blue: "bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300",
+    yellow: "bg-yellow-50 text-yellow-700 dark:bg-yellow-950/50 dark:text-yellow-300",
+    green: "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-300",
+    gray: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
   };
 
   return (

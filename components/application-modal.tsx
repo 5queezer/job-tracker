@@ -272,15 +272,15 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white rounded-t-2xl z-10">
-          <h2 className="text-lg font-semibold text-gray-900">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 rounded-t-2xl z-10">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
             {isEditing ? t("title_edit") : t("title_new")}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors text-xl leading-none"
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors text-xl leading-none"
           >
             ×
           </button>
@@ -289,14 +289,14 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+            <div className="p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400 rounded-lg text-sm">
               {error}
             </div>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("company")} <span className="text-red-500">{t("required")}</span>
               </label>
               <input
@@ -305,13 +305,13 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
                 value={form.company}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder={t("company_placeholder")}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("role")} <span className="text-red-500">{t("required")}</span>
               </label>
               <input
@@ -320,21 +320,21 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
                 value={form.role}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder={t("role_placeholder")}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t("status")}
             </label>
             <select
               name="status"
               value={form.status}
               onChange={handleChange}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {STATUS_ORDER.map((value) => (
                 <option key={value} value={value}>
@@ -351,7 +351,7 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("applied_at")}
               </label>
               <input
@@ -359,12 +359,12 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
                 name="appliedAt"
                 value={form.appliedAt}
                 onChange={handleChange}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("last_contact")}
               </label>
               <input
@@ -372,13 +372,13 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
                 name="lastContact"
                 value={form.lastContact}
                 onChange={handleChange}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               🔔 {t("follow_up")}
             </label>
             <input
@@ -386,12 +386,12 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
               name="followUpAt"
               value={form.followUpAt}
               onChange={handleChange}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t("notes")}
             </label>
             <textarea
@@ -399,17 +399,17 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
               value={form.notes}
               onChange={handleChange}
               rows={3}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               placeholder={t("notes_placeholder")}
             />
           </div>
 
           {/* Job Description — collapsible */}
-          <div className="border border-gray-100 rounded-lg overflow-hidden">
+          <div className="border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden">
             <button
               type="button"
               onClick={() => setJdOpen((v) => !v)}
-              className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 transition-colors"
+              className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <span>{jdOpen ? t("job_description_toggle_hide") : t("job_description_toggle_show")}</span>
               <span className="text-gray-400">{jdOpen ? "▲" : "▼"}</span>
@@ -421,7 +421,7 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
                   value={form.jobDescription}
                   onChange={handleChange}
                   rows={8}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y font-mono text-xs"
+                  className="w-full border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-y font-mono text-xs"
                   placeholder={t("job_description_placeholder")}
                 />
               </div>
@@ -429,11 +429,11 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
           </div>
 
           {/* Contacts — collapsible */}
-          <div className="border border-gray-100 rounded-lg overflow-hidden">
+          <div className="border border-gray-100 dark:border-gray-700 rounded-lg overflow-hidden">
             <button
               type="button"
               onClick={() => setContactsOpen((v) => !v)}
-              className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 transition-colors"
+              className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <span>
                 👤 {t("contacts_section")}
@@ -448,15 +448,15 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
             {contactsOpen && (
               <div className="p-3 space-y-3">
                 {contactError && (
-                  <div className="p-2 bg-red-50 border border-red-200 text-red-700 rounded text-xs">
+                  <div className="p-2 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400 rounded text-xs">
                     {contactError}
                   </div>
                 )}
                 {contacts.map((c, idx) => (
-                  <div key={c.id ?? `new-${idx}`} className="border border-gray-100 rounded-lg p-3 space-y-2 bg-gray-50">
+                  <div key={c.id ?? `new-${idx}`} className="border border-gray-100 dark:border-gray-600 rounded-lg p-3 space-y-2 bg-gray-50 dark:bg-gray-900/50">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-0.5">
+                        <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-0.5">
                           {t("contact_name")} <span className="text-red-400">*</span>
                         </label>
                         <input
@@ -464,11 +464,11 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
                           value={c.name}
                           onChange={(e) => handleContactChange(idx, "name", e.target.value)}
                           placeholder={t("contact_name_placeholder")}
-                          className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full border border-gray-200 dark:border-gray-600 rounded px-2 py-1.5 text-xs bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-0.5">
+                        <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-0.5">
                           {t("contact_role")}
                         </label>
                         <input
@@ -476,12 +476,12 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
                           value={c.role}
                           onChange={(e) => handleContactChange(idx, "role", e.target.value)}
                           placeholder={t("contact_role_placeholder")}
-                          className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full border border-gray-200 dark:border-gray-600 rounded px-2 py-1.5 text-xs bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-0.5">
+                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-0.5">
                         {t("contact_email")}
                       </label>
                       <input
@@ -489,11 +489,11 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
                         value={c.email}
                         onChange={(e) => handleContactChange(idx, "email", e.target.value)}
                         placeholder={t("contact_email_placeholder")}
-                        className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-gray-200 dark:border-gray-600 rounded px-2 py-1.5 text-xs bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-0.5">
+                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-0.5">
                         {t("contact_linkedin")}
                       </label>
                       <input
@@ -501,7 +501,7 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
                         value={c.linkedIn}
                         onChange={(e) => handleContactChange(idx, "linkedIn", e.target.value)}
                         placeholder={t("contact_linkedin_placeholder")}
-                        className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full border border-gray-200 dark:border-gray-600 rounded px-2 py-1.5 text-xs bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div className="flex gap-2 justify-end pt-1">
@@ -519,7 +519,7 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
                         type="button"
                         onClick={() => removeContact(idx)}
                         disabled={deletingContactId === c.id}
-                        className="px-3 py-1 border border-red-200 text-red-600 rounded text-xs font-medium hover:bg-red-50 disabled:opacity-50 transition-colors"
+                        className="px-3 py-1 border border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-400 rounded text-xs font-medium hover:bg-red-50 dark:hover:bg-red-950/50 disabled:opacity-50 transition-colors"
                       >
                         {deletingContactId === c.id ? "…" : t("contact_remove")}
                       </button>
@@ -529,7 +529,7 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
                 <button
                   type="button"
                   onClick={addContactRow}
-                  className="w-full border border-dashed border-gray-300 rounded-lg py-2 text-sm text-gray-500 hover:border-blue-400 hover:text-blue-600 transition-colors"
+                  className="w-full border border-dashed border-gray-300 dark:border-gray-600 rounded-lg py-2 text-sm text-gray-500 dark:text-gray-400 hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   {t("contacts_add")}
                 </button>
@@ -542,7 +542,7 @@ export function ApplicationModal({ application, onClose }: ApplicationModalProps
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 border border-gray-200 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+              className="flex-1 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               {ta("cancel")}
             </button>

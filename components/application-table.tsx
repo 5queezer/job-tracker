@@ -31,17 +31,17 @@ function StatusBadge({ status }: { status: ApplicationStatus }) {
 }
 
 function ContactPills({ contacts }: { contacts?: Contact[] }) {
-  if (!contacts || contacts.length === 0) return <span className="text-gray-400">—</span>;
+  if (!contacts || contacts.length === 0) return <span className="text-gray-400 dark:text-gray-500">—</span>;
   return (
     <div className="flex flex-wrap gap-1">
       {contacts.map((c) => (
         <span
           key={c.id}
           title={[c.role, c.email].filter(Boolean).join(" · ")}
-          className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 whitespace-nowrap"
+          className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 whitespace-nowrap"
         >
           {c.name}
-          {c.role && <span className="ml-1 text-indigo-500 font-normal">· {c.role}</span>}
+          {c.role && <span className="ml-1 text-indigo-500 dark:text-indigo-400 font-normal">· {c.role}</span>}
         </span>
       ))}
     </div>
@@ -49,14 +49,14 @@ function ContactPills({ contacts }: { contacts?: Contact[] }) {
 }
 
 function FollowUpCell({ date }: { date: string | null }) {
-  if (!date) return <span className="text-gray-400">—</span>;
+  if (!date) return <span className="text-gray-400 dark:text-gray-500">—</span>;
   const d = new Date(date);
   const overdue = isPast(d) && !isToday(d);
   const due = isToday(d);
   return (
     <span
       className={`text-sm font-medium ${
-        overdue ? "text-red-600" : due ? "text-orange-500" : "text-gray-600"
+        overdue ? "text-red-600 dark:text-red-400" : due ? "text-orange-500 dark:text-orange-400" : "text-gray-600 dark:text-gray-400"
       }`}
       title={overdue ? "Überfällig" : due ? "Heute fällig" : ""}
     >
@@ -97,12 +97,12 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
     columnHelper.accessor("company", {
       header: t("company"),
       cell: (info) => (
-        <span className="font-medium text-gray-900">{info.getValue()}</span>
+        <span className="font-medium text-gray-900 dark:text-white">{info.getValue()}</span>
       ),
     }),
     columnHelper.accessor("role", {
       header: t("role"),
-      cell: (info) => <span className="text-gray-700">{info.getValue()}</span>,
+      cell: (info) => <span className="text-gray-700 dark:text-gray-300">{info.getValue()}</span>,
     }),
     columnHelper.accessor("status", {
       header: t("status"),
@@ -112,13 +112,13 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
     columnHelper.accessor("appliedAt", {
       header: t("applied_at"),
       cell: (info) => (
-        <span className="text-gray-500 text-sm">{formatDate(info.getValue())}</span>
+        <span className="text-gray-500 dark:text-gray-400 text-sm">{formatDate(info.getValue())}</span>
       ),
     }),
     columnHelper.accessor("lastContact", {
       header: t("last_contact"),
       cell: (info) => (
-        <span className="text-gray-500 text-sm">{formatDate(info.getValue())}</span>
+        <span className="text-gray-500 dark:text-gray-400 text-sm">{formatDate(info.getValue())}</span>
       ),
     }),
     columnHelper.accessor("followUpAt", {
@@ -129,7 +129,7 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
       header: t("notes"),
       cell: (info) => (
         <span
-          className="text-gray-500 text-sm max-w-xs truncate block"
+          className="text-gray-500 dark:text-gray-400 text-sm max-w-xs truncate block"
           title={info.getValue() || ""}
         >
           {info.getValue() || "—"}
@@ -178,15 +178,15 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
   const statusFilter = columnFilters.find((f) => f.id === "status")?.value as string | undefined;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Filters */}
-      <div className="p-4 border-b border-gray-100 flex flex-wrap gap-3">
+      <div className="p-4 border-b border-gray-100 dark:border-gray-700 flex flex-wrap gap-3">
         <input
           type="text"
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
           placeholder={ta("search")}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 w-52 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 w-52 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         <select
           value={statusFilter || ""}
@@ -197,7 +197,7 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
               setColumnFilters([]);
             }
           }}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
           <option value="">{ta("all_statuses")}</option>
           {STATUS_ORDER.map((value) => (
@@ -212,7 +212,7 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
               setGlobalFilter("");
               setColumnFilters([]);
             }}
-            className="text-sm text-gray-500 hover:text-gray-700 underline"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline"
           >
             {ta("filter_reset")}
           </button>
@@ -224,14 +224,14 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
         <table className="w-full">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="bg-gray-50 border-b border-gray-100">
+              <tr key={headerGroup.id} className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
-                    className={`text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3 ${
+                    className={`text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-4 py-3 ${
                       header.column.getCanSort()
-                        ? "cursor-pointer select-none hover:text-gray-700"
+                        ? "cursor-pointer select-none hover:text-gray-700 dark:hover:text-gray-200"
                         : ""
                     }`}
                   >
@@ -248,7 +248,7 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
           <tbody>
             {table.getRowModel().rows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="text-center py-12 text-gray-400">
+                <td colSpan={columns.length} className="text-center py-12 text-gray-400 dark:text-gray-500">
                   {t("empty")}
                 </td>
               </tr>
@@ -259,7 +259,7 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
                 return (
                   <tr
                     key={row.id}
-                    className={`border-b border-gray-50 hover:bg-blue-50/30 transition-colors ${rowColor}`}
+                    className={`border-b border-gray-50 dark:border-gray-700/50 hover:bg-blue-50/30 dark:hover:bg-blue-950/20 transition-colors ${rowColor}`}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="px-4 py-3">
@@ -275,7 +275,7 @@ export function ApplicationTable({ applications, onEdit, onDelete }: Application
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-3 border-t border-gray-100 text-xs text-gray-400">
+      <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700 text-xs text-gray-400 dark:text-gray-500">
         {t("count", {
           filtered: table.getFilteredRowModel().rows.length,
           total: applications.length,

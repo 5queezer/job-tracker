@@ -179,7 +179,7 @@ function LangToggle({
   return (
     <a
       href={`/share?token=${token}&lang=${other}`}
-      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-sm font-medium text-gray-600 transition-colors"
+      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300 transition-colors"
       title={other === "en" ? "Switch to English" : "Auf Deutsch wechseln"}
     >
       {other === "en" ? "🇬🇧 EN" : "🇦🇹 DE"}
@@ -243,16 +243,16 @@ export default async function SharePage({ searchParams }: SharePageProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
               <span className="text-2xl">💼</span>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">{t.title(ownerName)}</h1>
-                <p className="text-xs text-gray-500">{t.subtitle}</p>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t.title(ownerName)}</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{t.subtitle}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -276,20 +276,20 @@ export default async function SharePage({ searchParams }: SharePageProps) {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               {t.table.heading} ({applications.length})
             </h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
+                <tr className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
                   {tableHeaders.map((h) => (
                     <th
                       key={h}
-                      className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3"
+                      className="text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-4 py-3"
                     >
                       {h}
                     </th>
@@ -299,7 +299,7 @@ export default async function SharePage({ searchParams }: SharePageProps) {
               <tbody>
                 {applications.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-12 text-gray-400">
+                    <td colSpan={7} className="text-center py-12 text-gray-400 dark:text-gray-500">
                       {t.table.empty}
                     </td>
                   </tr>
@@ -307,30 +307,30 @@ export default async function SharePage({ searchParams }: SharePageProps) {
                   applications.map((app) => (
                     <tr
                       key={app.id}
-                      className="border-b border-gray-50 hover:bg-blue-50/30 transition-colors"
+                      className="border-b border-gray-50 dark:border-gray-700/50 hover:bg-blue-50/30 dark:hover:bg-blue-950/20 transition-colors"
                     >
-                      <td className="px-4 py-3 font-medium text-gray-900">
+                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
                         {app.company}
                       </td>
-                      <td className="px-4 py-3 text-gray-700">{app.role}</td>
+                      <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{app.role}</td>
                       <td className="px-4 py-3">
                         <StatusBadge
                           status={app.status as ApplicationStatus}
                           labels={t.status}
                         />
                       </td>
-                      <td className="px-4 py-3 text-gray-500 text-sm">
+                      <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-sm">
                         {formatDate(app.appliedAt, dateLocale)}
                       </td>
-                      <td className="px-4 py-3 text-gray-500 text-sm">
+                      <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-sm">
                         {formatDate(app.lastContact, dateLocale)}
                       </td>
-                      <td className="px-4 py-3 text-gray-500 text-sm">
+                      <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-sm">
                         {formatDate(app.followUpAt, dateLocale)}
                       </td>
                       <td className="px-4 py-3">
                         <span
-                          className="text-gray-500 text-sm max-w-xs truncate block"
+                          className="text-gray-500 dark:text-gray-400 text-sm max-w-xs truncate block"
                           title={app.notes || ""}
                         >
                           {app.notes || "—"}
@@ -342,7 +342,7 @@ export default async function SharePage({ searchParams }: SharePageProps) {
               </tbody>
             </table>
           </div>
-          <div className="px-4 py-3 border-t border-gray-100 text-xs text-gray-400">
+          <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-700 text-xs text-gray-400 dark:text-gray-500">
             {t.footer(
               applications.length,
               format(new Date(), "dd.MM.yyyy HH:mm", { locale: dateLocale })
@@ -351,28 +351,28 @@ export default async function SharePage({ searchParams }: SharePageProps) {
         </div>
 
         {/* Documents */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mt-8">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden mt-8">
+          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               {t.docs.heading} ({documents.length})
             </h2>
           </div>
           {documents.length === 0 ? (
-            <div className="text-center py-12 text-gray-400">
+            <div className="text-center py-12 text-gray-400 dark:text-gray-500">
               <div className="text-3xl mb-2">📭</div>
               <p>{t.docs.empty}</p>
             </div>
           ) : (
-            <ul className="divide-y divide-gray-50">
+            <ul className="divide-y divide-gray-50 dark:divide-gray-700/50">
               {documents.map((doc) => (
                 <li
                   key={doc.id}
-                  className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50/60 transition-colors"
+                  className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50/60 dark:hover:bg-gray-700/50 transition-colors"
                 >
                   <span className="text-2xl flex-shrink-0">{fileIcon(doc.mimeType)}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 truncate">{doc.originalName}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="font-medium text-gray-900 dark:text-white truncate">{doc.originalName}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                       {formatBytes(doc.size)} ·{" "}
                       {format(new Date(doc.uploadedAt), "dd.MM.yyyy HH:mm", { locale: dateLocale })}
                     </p>
@@ -390,7 +390,7 @@ export default async function SharePage({ searchParams }: SharePageProps) {
           )}
         </div>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
+        <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-6">
           {t.readOnlyNote}
         </p>
       </main>

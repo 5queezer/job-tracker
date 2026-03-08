@@ -50,20 +50,20 @@ function KanbanCard({ app, onEdit, isDragging = false }: CardProps) {
     <div
       onClick={() => onEdit(app)}
       className={`
-        bg-white border rounded-lg p-3 cursor-pointer transition-all group
+        bg-white dark:bg-gray-800 border rounded-lg p-3 cursor-pointer transition-all group
         ${isDragging
           ? "border-blue-400 shadow-xl opacity-90 rotate-1 scale-105"
-          : "border-gray-200 hover:shadow-md hover:border-blue-300"
+          : "border-gray-200 dark:border-gray-700 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-500"
         }
       `}
     >
-      <div className="font-semibold text-gray-900 text-sm group-hover:text-blue-700 truncate">
+      <div className="font-semibold text-gray-900 dark:text-white text-sm group-hover:text-blue-700 dark:group-hover:text-blue-400 truncate">
         {app.company}
       </div>
-      <div className="text-xs text-gray-500 mt-0.5 truncate">{app.role}</div>
+      <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">{app.role}</div>
 
       {app.appliedAt && (
-        <div className="text-xs text-gray-400 mt-2">
+        <div className="text-xs text-gray-400 dark:text-gray-500 mt-2">
           {format(new Date(app.appliedAt), "dd.MM.yy")}
         </div>
       )}
@@ -80,7 +80,7 @@ function KanbanCard({ app, onEdit, isDragging = false }: CardProps) {
       )}
 
       {app.notes && (
-        <div className="text-xs text-gray-400 mt-1.5 truncate" title={app.notes}>
+        <div className="text-xs text-gray-400 dark:text-gray-500 mt-1.5 truncate" title={app.notes}>
           {app.notes}
         </div>
       )}
@@ -139,7 +139,7 @@ function KanbanColumn({ status, apps, onEdit, isOver }: KanbanColumnProps) {
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${colorClass}`}>
           {ts(status)}
         </span>
-        <span className="text-xs text-gray-400 font-medium">{apps.length}</span>
+        <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">{apps.length}</span>
       </div>
 
       {/* Drop zone — scrolls independently so long columns don't blow the page height */}
@@ -148,11 +148,11 @@ function KanbanColumn({ status, apps, onEdit, isOver }: KanbanColumnProps) {
         className={`
           flex flex-col gap-2 flex-1 min-h-[80px] max-h-[calc(100vh-220px)]
           overflow-y-auto rounded-lg p-1 transition-colors
-          ${isOver ? "bg-blue-50 ring-2 ring-blue-300 ring-inset" : ""}
+          ${isOver ? "bg-blue-50 dark:bg-blue-950/30 ring-2 ring-blue-300 dark:ring-blue-600 ring-inset" : ""}
         `}
       >
         {apps.length === 0 && !isOver ? (
-          <div className="text-xs text-gray-300 italic py-2 text-center border border-dashed border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-300 dark:text-gray-600 italic py-2 text-center border border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
             {tk("empty")}
           </div>
         ) : (

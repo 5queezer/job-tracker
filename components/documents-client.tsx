@@ -69,7 +69,7 @@ function CopyShareLink({ docId }: { docId: string }) {
     <button
       onClick={handleCopy}
       title="Share-Link kopieren"
-      className="text-gray-400 hover:text-gray-700 text-sm font-medium transition-colors"
+      className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm font-medium transition-colors"
     >
       {copied ? "✅" : "🔗"}
     </button>
@@ -135,18 +135,18 @@ export function DocumentsClient({ user }: DocumentsClientProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <Link href="/" className="text-gray-400 hover:text-gray-600 transition-colors">
+              <Link href="/" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
                 ← Zurück
               </Link>
-              <span className="text-gray-200">|</span>
+              <span className="text-gray-200 dark:text-gray-600">|</span>
               <span className="text-2xl">📁</span>
-              <h1 className="text-xl font-bold text-gray-900">Dokumente</h1>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Dokumente</h1>
             </div>
             <div className="flex items-center gap-3">
               {user.image && (
@@ -157,7 +157,7 @@ export function DocumentsClient({ user }: DocumentsClientProps) {
                   className="w-8 h-8 rounded-full"
                 />
               )}
-              <span className="text-sm text-gray-600 hidden sm:block">
+              <span className="text-sm text-gray-600 dark:text-gray-300 hidden sm:block">
                 {user.name || user.email}
               </span>
             </div>
@@ -174,8 +174,8 @@ export function DocumentsClient({ user }: DocumentsClientProps) {
           onClick={() => fileInputRef.current?.click()}
           className={`cursor-pointer border-2 border-dashed rounded-xl p-10 text-center transition-colors mb-8 ${
             dragOver
-              ? "border-blue-400 bg-blue-50"
-              : "border-gray-300 bg-white hover:border-blue-400 hover:bg-blue-50/30"
+              ? "border-blue-400 bg-blue-50 dark:bg-blue-950/30"
+              : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-blue-400 hover:bg-blue-50/30 dark:hover:bg-blue-950/20"
           }`}
         >
           <input
@@ -187,12 +187,12 @@ export function DocumentsClient({ user }: DocumentsClientProps) {
             onChange={(e) => handleUpload(e.target.files)}
           />
           <div className="text-4xl mb-3">{uploading ? "⏳" : "📤"}</div>
-          <p className="text-gray-700 font-medium">
+          <p className="text-gray-700 dark:text-gray-200 font-medium">
             {uploading
               ? "Wird hochgeladen…"
               : "Datei hierher ziehen oder klicken zum Auswählen"}
           </p>
-          <p className="text-gray-400 text-sm mt-1">
+          <p className="text-gray-400 dark:text-gray-500 text-sm mt-1">
             PDF, JPEG, PNG · Max. 10 MB pro Datei
           </p>
           {uploadError && (
@@ -201,9 +201,9 @@ export function DocumentsClient({ user }: DocumentsClientProps) {
         </div>
 
         {/* Document list */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900">
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               Hochgeladene Dokumente ({documents.length})
             </h2>
           </div>
@@ -213,21 +213,21 @@ export function DocumentsClient({ user }: DocumentsClientProps) {
               <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
             </div>
           ) : documents.length === 0 ? (
-            <div className="text-center py-16 text-gray-400">
+            <div className="text-center py-16 text-gray-400 dark:text-gray-500">
               <div className="text-4xl mb-3">📭</div>
               <p>Noch keine Dokumente hochgeladen.</p>
             </div>
           ) : (
-            <ul className="divide-y divide-gray-50">
+            <ul className="divide-y divide-gray-50 dark:divide-gray-700/50">
               {documents.map((doc) => (
                 <li
                   key={doc.id}
-                  className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50/60 transition-colors"
+                  className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50/60 dark:hover:bg-gray-700/50 transition-colors"
                 >
                   <span className="text-2xl flex-shrink-0">{fileIcon(doc.mimeType)}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 truncate">{doc.originalName}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="font-medium text-gray-900 dark:text-white truncate">{doc.originalName}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                       {formatBytes(doc.size)} ·{" "}
                       {format(new Date(doc.uploadedAt), "dd.MM.yyyy HH:mm", { locale: de })}
                     </p>
@@ -236,7 +236,7 @@ export function DocumentsClient({ user }: DocumentsClientProps) {
                         {doc.applications.map((a) => (
                           <span
                             key={a.id}
-                            className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-xs"
+                            className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 text-xs"
                           >
                             {a.company} – {a.role}
                           </span>
@@ -266,7 +266,7 @@ export function DocumentsClient({ user }: DocumentsClientProps) {
           )}
         </div>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
+        <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-6">
           Dokumente sind nur für dich sichtbar (Login erforderlich).
         </p>
       </main>

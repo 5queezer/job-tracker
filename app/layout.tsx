@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description: "Track your job applications",
 };
 
+// Inline script to apply theme before first paint (prevents flash)
+const themeScript = `(function(){try{var t=localStorage.getItem("theme")||"system";if(t==="dark"||(t==="system"&&matchMedia("(prefers-color-scheme:dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})()`;
+
 export default async function RootLayout({
   children,
 }: {
@@ -21,8 +24,11 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <body className={`${geist.className} bg-gray-50 min-h-screen`}>
+    <html lang={locale} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className={`${geist.className} bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors`}>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
