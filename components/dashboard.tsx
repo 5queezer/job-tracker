@@ -156,10 +156,10 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
                   className="w-8 h-8 rounded-full"
                 />
               )}
-              <span className="text-sm text-gray-600">{user.name || user.email}</span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">{user.name || user.email}</span>
               <Link
                 href="/documents"
-                className="flex items-center min-h-[44px] px-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                className="flex items-center min-h-[44px] px-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors"
               >
                 📁 Dokumente
               </Link>
@@ -167,14 +167,14 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
                 href={shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center min-h-[44px] px-2 text-sm text-blue-500 hover:text-blue-700 transition-colors"
+                className="flex items-center min-h-[44px] px-2 text-sm text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                 title="Readonly link for family/AMS"
               >
                 🔗 Share
               </a>
               <button
                 onClick={handleLogout}
-                className="flex items-center min-h-[44px] px-2 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                className="flex items-center min-h-[44px] px-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors"
               >
                 {tn("logout")}
               </button>
@@ -193,7 +193,7 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
               )}
               <button
                 onClick={() => setMobileMenuOpen((v) => !v)}
-                className="flex items-center justify-center w-11 h-11 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+                className="flex items-center justify-center w-11 h-11 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 aria-label="Menu"
               >
                 {mobileMenuOpen ? "✕" : "☰"}
@@ -347,10 +347,10 @@ function StatCard({
   color: "blue" | "yellow" | "green" | "gray";
 }) {
   const colors = {
-    blue: "bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300",
-    yellow: "bg-yellow-50 text-yellow-700 dark:bg-yellow-950/50 dark:text-yellow-300",
-    green: "bg-green-50 text-green-700 dark:bg-green-950/50 dark:text-green-300",
-    gray: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+    blue: "bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400",
+    yellow: "bg-yellow-50 text-yellow-700 dark:bg-amber-500/15 dark:text-amber-400",
+    green: "bg-green-50 text-green-700 dark:bg-emerald-500/15 dark:text-emerald-400",
+    gray: "bg-gray-100 text-gray-600 dark:bg-gray-700/40 dark:text-gray-300",
   };
 
   return (

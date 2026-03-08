@@ -35,13 +35,13 @@ export interface Application {
 
 // Color mapping per status — labels come from i18n translations
 export const STATUS_COLORS: Record<ApplicationStatus, string> = {
-  applied: "bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-300",
-  waiting: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/60 dark:text-yellow-300",
-  interview: "bg-purple-100 text-purple-800 dark:bg-purple-900/60 dark:text-purple-300",
-  rejected: "bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300",
-  offer: "bg-green-100 text-green-800 dark:bg-green-900/60 dark:text-green-300",
-  ghost: "bg-gray-100 text-gray-600 dark:bg-gray-700/60 dark:text-gray-400",
-  draft: "bg-slate-100 text-slate-600 dark:bg-slate-700/60 dark:text-slate-400",
+  applied: "bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-400",
+  waiting: "bg-yellow-100 text-yellow-800 dark:bg-amber-500/20 dark:text-amber-400",
+  interview: "bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-400",
+  rejected: "bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-400",
+  offer: "bg-green-100 text-green-800 dark:bg-emerald-500/20 dark:text-emerald-400",
+  ghost: "bg-gray-100 text-gray-600 dark:bg-gray-500/20 dark:text-gray-400",
+  draft: "bg-slate-100 text-slate-600 dark:bg-slate-500/20 dark:text-slate-400",
 };
 
 // Row highlight colors for table

@@ -38,7 +38,7 @@ function ContactPills({ contacts }: { contacts?: Contact[] }) {
         <span
           key={c.id}
           title={[c.role, c.email].filter(Boolean).join(" · ")}
-          className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 whitespace-nowrap"
+          className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-500/20 dark:text-indigo-400 whitespace-nowrap"
         >
           {c.name}
           {c.role && <span className="ml-1 text-indigo-500 dark:text-indigo-400 font-normal">· {c.role}</span>}
