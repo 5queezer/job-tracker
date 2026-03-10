@@ -13,12 +13,15 @@ import { Application, ApplicationStatus } from "@/types";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
+import { AdminUsers } from "./admin-users";
 
 interface DashboardProps {
   user: {
+    id: string;
     name?: string | null;
     email: string;
     image?: string | null;
+    isAdmin: boolean;
   };
   shareUrl: string;
 }
@@ -75,6 +78,7 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
   const [editingApp, setEditingApp] = useState<Application | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("table");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
 
   const { data: applications = [], isLoading, isError } = useQuery({
     queryKey: ["applications"],
@@ -157,6 +161,16 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
                 />
               )}
               <span className="text-sm text-gray-600 dark:text-gray-300">{user.name || user.email}</span>
+              {user.isAdmin && (
+                <button
+                  onClick={() => setIsAdminPanelOpen((v) => !v)}
+                  className={`flex items-center min-h-[44px] px-2 text-sm font-medium transition-colors ${
+                    isAdminPanelOpen ? "text-blue-600" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                  }`}
+                >
+                  🛡️ Admin
+                </button>
+              )}
               <Link
                 href="/documents"
                 className="flex items-center min-h-[44px] px-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors"
@@ -254,6 +268,12 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
           <StatCard label={ts("offers")} value={stats.offers} color="green" />
           <StatCard label={ts("ghosted")} value={stats.ghosted} color="gray" />
         </div>
+
+        {isAdminPanelOpen && (
+          <div className="mb-8">
+            <AdminUsers />
+          </div>
+        )}
 
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">

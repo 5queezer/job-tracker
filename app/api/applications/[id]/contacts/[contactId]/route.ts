@@ -1,29 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { requireAuthOrToken } from "@/lib/session";
-import { requireUserId } from "@/lib/tenant";
+import { requireAuth } from "@/lib/session";
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string; contactId: string }> }
 ) {
-  const auth = await requireAuthOrToken(request);
+  const auth = await requireAuth();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let userId: string;
-  try {
-    userId = requireUserId(auth.userId);
-  } catch {
-    return NextResponse.json({ error: "Session required" }, { status: 403 });
   }
 
   const { id: applicationId, contactId } = await params;
   const body = await request.json();
   const { name, email, phone, role, linkedIn } = body;
 
-  const contact = await getDb().updateContact(contactId, applicationId, userId, {
+  const contact = await getDb().updateContact(contactId, applicationId, auth.userId, {
     ...(name !== undefined && { name: String(name).slice(0, 255) }),
     ...(email !== undefined && { email: email ? String(email).slice(0, 255) : null }),
     ...(phone !== undefined && { phone: phone ? String(phone).slice(0, 50) : null }),
@@ -35,23 +27,16 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string; contactId: string }> }
 ) {
-  const auth = await requireAuthOrToken(request);
+  const auth = await requireAuth();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let userId: string;
-  try {
-    userId = requireUserId(auth.userId);
-  } catch {
-    return NextResponse.json({ error: "Session required" }, { status: 403 });
-  }
-
   const { id: applicationId, contactId } = await params;
-  await getDb().deleteContact(contactId, applicationId, userId);
+  await getDb().deleteContact(contactId, applicationId, auth.userId);
 
   return NextResponse.json({ success: true });
 }

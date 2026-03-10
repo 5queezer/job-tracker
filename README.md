@@ -104,9 +104,10 @@ docker run -p 8080:8080 --env-file .env job-tracker
 
 The repo includes a GitHub Actions workflow (`.github/workflows/deploy-gcp.yml`) that on push to `main`:
 
-1. Builds a Docker image
-2. Pushes to Artifact Registry
-3. Deploys to Cloud Run with secrets from Secret Manager
+1. Pushes Schema updates (`prisma db push`)
+2. Builds a Docker image
+3. Pushes to Artifact Registry
+4. Deploys to Cloud Run with secrets from Secret Manager
 
 Uses Workload Identity Federation — no service account keys needed.
 

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { requireAuthOrToken } from "@/lib/session";
-import { requireUserId } from "@/lib/tenant";
+import { requireAuth } from "@/lib/session";
 import { uploadFile } from "@/lib/storage";
 import crypto from "crypto";
 import path from "path";
@@ -9,27 +8,20 @@ import path from "path";
 const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
 
-export async function GET(request: NextRequest) {
-  const auth = await requireAuthOrToken(request);
+export async function GET(_request: NextRequest) {
+  const auth = await requireAuth();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const documents = await getDb().listDocuments(auth.userId);
+  const documents = await getDb().listDocuments(auth.readScopeUserId);
   return NextResponse.json(documents);
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuthOrToken(request);
+  const auth = await requireAuth();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let userId: string;
-  try {
-    userId = requireUserId(auth.userId);
-  } catch {
-    return NextResponse.json({ error: "Session required" }, { status: 403 });
   }
 
   const formData = await request.formData();
@@ -57,7 +49,6 @@ export async function POST(request: NextRequest) {
   const buffer = Buffer.from(await file.arrayBuffer());
   await uploadFile(storedFilename, buffer, file.type);
 
-  // Parse optional application IDs to link
   let applicationIds: string[] = [];
   if (applicationIdsRaw) {
     try {
@@ -70,7 +61,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const document = await getDb().createDocument(userId, {
+  const document = await getDb().createDocument(auth.userId, {
     filename: storedFilename,
     originalName: file.name.slice(0, 255),
     size: file.size,

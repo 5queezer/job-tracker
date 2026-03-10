@@ -344,7 +344,22 @@ export class FirestoreAdapter implements DatabaseAdapter {
   async getUser(id: string): Promise<UserRecord | null> {
     return prisma.user.findUnique({
       where: { id },
-      select: { id: true, name: true, email: true },
+      select: { id: true, name: true, email: true, isAdmin: true },
+    });
+  }
+
+  async listUsers(): Promise<UserRecord[]> {
+    return prisma.user.findMany({
+      orderBy: [{ isAdmin: "desc" }, { email: "asc" }],
+      select: { id: true, name: true, email: true, isAdmin: true },
+    });
+  }
+
+  async updateUserAdmin(id: string, isAdmin: boolean): Promise<UserRecord> {
+    return prisma.user.update({
+      where: { id },
+      data: { isAdmin },
+      select: { id: true, name: true, email: true, isAdmin: true },
     });
   }
 

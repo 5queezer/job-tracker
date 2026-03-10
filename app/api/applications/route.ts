@@ -1,29 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { requireAuthOrToken } from "@/lib/session";
-import { requireUserId } from "@/lib/tenant";
+import { requireAuth } from "@/lib/session";
 
-export async function GET(request: NextRequest) {
-  const auth = await requireAuthOrToken(request);
+export async function GET(_request: NextRequest) {
+  const auth = await requireAuth();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const applications = await getDb().listApplications(auth.userId);
+  const applications = await getDb().listApplications(auth.readScopeUserId);
   return NextResponse.json(applications);
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuthOrToken(request);
+  const auth = await requireAuth();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let userId: string;
-  try {
-    userId = requireUserId(auth.userId);
-  } catch {
-    return NextResponse.json({ error: "Session required" }, { status: 403 });
   }
 
   const body = await request.json();
@@ -36,7 +28,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const application = await getDb().createApplication(userId, {
+  const application = await getDb().createApplication(auth.userId, {
     company: String(company).slice(0, 255),
     role: String(role).slice(0, 255),
     status: status || "applied",

@@ -32,6 +32,12 @@ jobs:
       - name: Configure Docker
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
 
+      - name: Prisma DB Push
+        run: |
+          npm ci
+          export DATABASE_URL=$(gcloud secrets versions access latest --secret="DATABASE_URL")
+          npx prisma db push --skip-generate
+
       - name: Build and push
         run: |
           docker build -t ${{ env.REPO }}/app:${{ github.sha }} -t ${{ env.REPO }}/app:latest .

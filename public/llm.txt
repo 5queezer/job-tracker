@@ -12,9 +12,8 @@ Multi-tenant: each user only sees their own data. One admin token bypasses tenan
 
 ### Admin API token (Bearer)
 - Header: `Authorization: Bearer $ADMIN_API_TOKEN`
-- The token value is set via environment variable on the server — never hardcoded
-- Admin token bypasses userId filtering (sees all tenants)
-- Store the token in your secrets manager; never commit it to version control
+- **Deprecated:** Admin tokens are no longer used for mutations. Admin access is now configured per-user in the web UI.
+- Admin role bypasses userId filtering (sees all tenants).
 
 ### Share token (read-only public)
 - Query param: `/share?token=$SHARE_TOKEN`

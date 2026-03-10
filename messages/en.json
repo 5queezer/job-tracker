@@ -136,5 +136,14 @@
       "draft": "Draft"
     },
     "footer_note": "This is a read-only view. Only Christian can make changes."
+  },
+  "admin": {
+    "title": "User Management",
+    "users": "Users",
+    "is_admin": "Admin",
+    "loading": "Loading users...",
+    "error_load": "Failed to load users.",
+    "error_update": "Failed to update admin status.",
+    "last_admin_error": "At least one administrator is required."
   }
 }

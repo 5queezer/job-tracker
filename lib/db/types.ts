@@ -49,6 +49,7 @@ export interface UserRecord {
   id: string;
   name: string | null;
   email: string;
+  isAdmin: boolean;
 }
 
 // ── Input types (passed into adapter) ────────────────────────────────────────

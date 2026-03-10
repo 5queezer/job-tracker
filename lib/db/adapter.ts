@@ -37,4 +37,6 @@ export interface DatabaseAdapter {
 
   // ── Users ────────────────────────────────────────────────────────────────
   getUser(id: string): Promise<UserRecord | null>;
+  listUsers(): Promise<UserRecord[]>;
+  updateUserAdmin(id: string, isAdmin: boolean): Promise<UserRecord>;
 }

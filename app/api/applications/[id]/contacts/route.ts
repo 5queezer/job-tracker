@@ -1,28 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { requireAuthOrToken } from "@/lib/session";
-import { requireUserId } from "@/lib/tenant";
+import { requireAuth } from "@/lib/session";
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuthOrToken(request);
+  const auth = await requireAuth();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let userId: string;
-  try {
-    userId = requireUserId(auth.userId);
-  } catch {
-    return NextResponse.json({ error: "Session required" }, { status: 403 });
-  }
-
   const { id: applicationId } = await params;
 
-  // Verify the application belongs to the requesting user
-  if (!(await getDb().verifyApplicationOwner(applicationId, userId))) {
+  if (!(await getDb().verifyApplicationOwner(applicationId, auth.userId))) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 

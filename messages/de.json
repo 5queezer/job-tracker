@@ -136,5 +136,14 @@
       "draft": "Entwurf"
     },
     "footer_note": "Dies ist eine schreibgeschützte Ansicht. Nur Christian kann Änderungen vornehmen."
+  },
+  "admin": {
+    "title": "Benutzerverwaltung",
+    "users": "Benutzer",
+    "is_admin": "Admin",
+    "loading": "Lade Benutzer...",
+    "error_load": "Fehler beim Laden der Benutzer.",
+    "error_update": "Fehler beim Aktualisieren des Admin-Status.",
+    "last_admin_error": "Mindestens ein Administrator ist erforderlich."
   }
 }
