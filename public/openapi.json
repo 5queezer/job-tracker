@@ -3,7 +3,7 @@
   "info": {
     "title": "Job Tracker API",
     "version": "1.0.0",
-    "description": "REST API for the Job Tracker application.\n\n## Authentication\n\nTwo auth methods are supported:\n\n- **BearerAuth** – `Authorization: Bearer $ADMIN_API_TOKEN`. Admin-scoped; bypasses per-user filtering. Read-only (mutations require a session).\n- **CookieAuth** – Session cookie set by the Better Auth `/api/auth` flow. Required for all write operations.\n\nEndpoints that accept either method are marked with both. Endpoints that **require** a session (mutations) are marked with `CookieAuth` only."
+    "description": "REST API for the Job Tracker application.\n\n## Authentication\n\nTwo auth methods are supported:\n\n- **BearerAuth** – `Authorization: Bearer <token>`. Per-user API token generated in the dashboard. Scoped to the token owner's data (admin tokens get cross-tenant read access).\n- **CookieAuth** – Session cookie set by the Better Auth `/api/auth` flow (Google OAuth).\n\nToken management (POST/DELETE `/api/token`) requires a session cookie. The file download endpoint also accepts a `PUBLIC_READ_TOKEN` query parameter for share links."
   },
   "servers": [
     {
@@ -16,13 +16,13 @@
       "BearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "description": "Admin API token. Set `Authorization: Bearer $ADMIN_API_TOKEN`. Grants read access across all users. Cannot perform mutations (session required for writes)."
+        "description": "Per-user API token generated via the dashboard (POST /api/token). Scoped to the token owner's data. Admin users' tokens get cross-tenant read access."
       },
       "CookieAuth": {
         "type": "apiKey",
         "in": "cookie",
         "name": "better-auth.session_token",
-        "description": "Session cookie issued by the Better Auth flow at `/api/auth`. Required for all create/update/delete operations."
+        "description": "Session cookie issued by the Better Auth flow at `/api/auth`. Admin users (isAdmin=true) bypass per-user filtering."
       }
     },
     "schemas": {
@@ -97,6 +97,28 @@
           }
         }
       },
+      "UserRecord": {
+        "type": "object",
+        "description": "A registered user.",
+        "required": ["id", "name", "email", "isAdmin"],
+        "properties": {
+          "id":      { "type": "string",  "example": "user_abc123" },
+          "name":    { "type": ["string", "null"], "example": "Jane Doe" },
+          "email":   { "type": "string",  "format": "email", "example": "jane@example.com" },
+          "isAdmin": { "type": "boolean", "example": false, "description": "Whether the user has admin privileges (sees all tenants)." }
+        }
+      },
+      "ApiTokenInfo": {
+        "type": "object",
+        "description": "API token metadata (never includes the raw token).",
+        "required": ["id", "name", "createdAt", "lastUsedAt"],
+        "properties": {
+          "id":         { "type": "string",          "example": "1" },
+          "name":       { "type": "string",          "example": "default" },
+          "createdAt":  { "type": "string",          "format": "date-time" },
+          "lastUsedAt": { "type": ["string", "null"], "format": "date-time" }
+        }
+      },
       "ErrorResponse": {
         "type": "object",
         "required": ["error"],
@@ -123,7 +145,7 @@
         }
       },
       "Forbidden": {
-        "description": "Session required — the bearer token cannot perform this mutation.",
+        "description": "Insufficient permissions — admin privileges required or resource does not belong to the authenticated user.",
         "content": {
           "application/json": {
             "schema": { "$ref": "#/components/schemas/ErrorResponse" },
@@ -155,7 +177,7 @@
       "get": {
         "operationId": "listApplications",
         "summary": "List applications",
-        "description": "Returns all applications for the authenticated user, ordered by creation date descending. Admin token returns all applications across users.",
+        "description": "Returns all applications for the authenticated user, ordered by creation date descending. Admin users see all applications across tenants.",
         "tags": ["Applications"],
         "security": [
           { "BearerAuth": [] },
@@ -179,9 +201,10 @@
       "post": {
         "operationId": "createApplication",
         "summary": "Create application",
-        "description": "Creates a new application owned by the session user. **Requires a session** — the admin bearer token cannot create applications.",
+        "description": "Creates a new application owned by the session user.",
         "tags": ["Applications"],
         "security": [
+          { "BearerAuth": [] },
           { "CookieAuth": [] }
         ],
         "requestBody": {
@@ -233,7 +256,7 @@
       "get": {
         "operationId": "getApplication",
         "summary": "Get application",
-        "description": "Returns a single application by ID. Access is scoped to the authenticated user (admin token sees all).",
+        "description": "Returns a single application by ID. Access is scoped to the authenticated user (admin users see all).",
         "tags": ["Applications"],
         "security": [
           { "BearerAuth": [] },
@@ -259,6 +282,7 @@
         "description": "Partially updates an application. All fields are optional. **Requires a session.**",
         "tags": ["Applications"],
         "security": [
+          { "BearerAuth": [] },
           { "CookieAuth": [] }
         ],
         "requestBody": {
@@ -302,6 +326,7 @@
         "description": "Deletes an application and its related contacts. **Requires a session.**",
         "tags": ["Applications"],
         "security": [
+          { "BearerAuth": [] },
           { "CookieAuth": [] }
         ],
         "responses": {
@@ -336,6 +361,7 @@
         "description": "Creates a contact associated with the given application. **Requires a session.** The application must belong to the authenticated user.",
         "tags": ["Contacts"],
         "security": [
+          { "BearerAuth": [] },
           { "CookieAuth": [] }
         ],
         "requestBody": {
@@ -395,6 +421,7 @@
         "description": "Partially updates a contact. All fields are optional. **Requires a session.** The parent application must belong to the authenticated user.",
         "tags": ["Contacts"],
         "security": [
+          { "BearerAuth": [] },
           { "CookieAuth": [] }
         ],
         "requestBody": {
@@ -435,6 +462,7 @@
         "description": "Deletes a contact. **Requires a session.** The parent application must belong to the authenticated user.",
         "tags": ["Contacts"],
         "security": [
+          { "BearerAuth": [] },
           { "CookieAuth": [] }
         ],
         "responses": {
@@ -457,7 +485,7 @@
       "get": {
         "operationId": "listDocuments",
         "summary": "List documents",
-        "description": "Returns all documents for the authenticated user, ordered by upload date descending. Each document includes its linked applications. Admin token returns all documents.",
+        "description": "Returns all documents for the authenticated user, ordered by upload date descending. Each document includes its linked applications. Admin users see all documents.",
         "tags": ["Documents"],
         "security": [
           { "BearerAuth": [] },
@@ -484,6 +512,7 @@
         "description": "Uploads a file (PDF, JPEG, PNG, or WEBP; max 10 MB). Optionally links the document to one or more applications owned by the session user. **Requires a session.**",
         "tags": ["Documents"],
         "security": [
+          { "BearerAuth": [] },
           { "CookieAuth": [] }
         ],
         "requestBody": {
@@ -558,6 +587,7 @@
         "description": "Replaces the set of applications linked to this document. Provide a complete `applicationIds` array — this is a *set* operation, not a merge. **Requires a session.**",
         "tags": ["Documents"],
         "security": [
+          { "BearerAuth": [] },
           { "CookieAuth": [] }
         ],
         "requestBody": {
@@ -600,6 +630,7 @@
         "description": "Deletes the document record and removes the file from disk. **Requires a session.**",
         "tags": ["Documents"],
         "security": [
+          { "BearerAuth": [] },
           { "CookieAuth": [] }
         ],
         "responses": {
@@ -626,10 +657,9 @@
       "get": {
         "operationId": "downloadDocumentFile",
         "summary": "Download document file",
-        "description": "Streams the raw file with the original filename as the download name.\n\nAccess is permitted via any of:\n- Session cookie (`CookieAuth`)\n- Admin bearer token (`BearerAuth`)\n- `?token=<PUBLIC_READ_TOKEN>` query parameter (share links / readonly embeds)\n\nThe public token is obtained from `GET /api/config/public-token`.",
+        "description": "Streams the raw file with the original filename as the download name.\n\nAccess is permitted via any of:\n- Session cookie (`CookieAuth`)\n- `?token=<PUBLIC_READ_TOKEN>` query parameter (share links / readonly embeds)\n\nThe public token is obtained from `GET /api/config/public-token`.",
         "tags": ["Documents"],
         "security": [
-          { "BearerAuth": [] },
           { "CookieAuth": [] },
           {}
         ],
@@ -666,6 +696,159 @@
         }
       }
     },
+    "/api/token": {
+      "get": {
+        "operationId": "getApiToken",
+        "summary": "Get current API token info",
+        "description": "Returns metadata about the authenticated user's API token, or null if none exists. Does not return the raw token.",
+        "tags": ["Token"],
+        "security": [
+          { "CookieAuth": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token metadata or null.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "oneOf": [
+                        { "$ref": "#/components/schemas/ApiTokenInfo" },
+                        { "type": "null" }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "post": {
+        "operationId": "createApiToken",
+        "summary": "Generate a new API token",
+        "description": "Generates a new per-user API token. If a token already exists, it is revoked first. The raw token is returned only once in the response. **Requires a session** (Bearer tokens cannot create new tokens).",
+        "tags": ["Token"],
+        "security": [
+          { "CookieAuth": [] }
+        ],
+        "responses": {
+          "201": {
+            "description": "Newly created token. The `raw` field contains the token value (shown only once).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["raw", "token"],
+                  "properties": {
+                    "raw":   { "type": "string", "example": "jt_abc123...", "description": "The raw API token. Copy it now — it will not be shown again." },
+                    "token": { "$ref": "#/components/schemas/ApiTokenInfo" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      },
+      "delete": {
+        "operationId": "revokeApiToken",
+        "summary": "Revoke API token",
+        "description": "Revokes the authenticated user's API token. **Requires a session.**",
+        "tags": ["Token"],
+        "security": [
+          { "CookieAuth": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token revoked.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessResponse" }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "operationId": "listUsers",
+        "summary": "List all users",
+        "description": "Returns all registered users. **Requires admin privileges.**",
+        "tags": ["Admin"],
+        "security": [
+          { "BearerAuth": [] },
+          { "CookieAuth": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of users.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/UserRecord" }
+                }
+              }
+            }
+          },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" },
+          "description": "User ID."
+        }
+      ],
+      "patch": {
+        "operationId": "updateUserAdmin",
+        "summary": "Update user admin status",
+        "description": "Sets or revokes admin privileges for a user. Cannot remove the last admin. **Requires admin privileges.**",
+        "tags": ["Admin"],
+        "security": [
+          { "BearerAuth": [] },
+          { "CookieAuth": [] }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["isAdmin"],
+                "properties": {
+                  "isAdmin": { "type": "boolean", "description": "Whether the user should have admin privileges." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated user.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserRecord" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
     "/api/config/public-token": {
       "get": {
         "operationId": "getPublicToken",
@@ -673,6 +856,7 @@
         "description": "Returns the `PUBLIC_READ_TOKEN` so authenticated clients can construct shareable file download URLs without the token being exposed in the JavaScript bundle. **Requires a session** (cookie auth only).",
         "tags": ["Config"],
         "security": [
+          { "BearerAuth": [] },
           { "CookieAuth": [] }
         ],
         "responses": {
@@ -703,6 +887,8 @@
     { "name": "Applications", "description": "Job application lifecycle management." },
     { "name": "Contacts",     "description": "Contacts associated with job applications." },
     { "name": "Documents",    "description": "File uploads linked to applications." },
-    { "name": "Config",       "description": "Client-side configuration endpoints." }
+    { "name": "Config",       "description": "Client-side configuration endpoints." },
+    { "name": "Token",        "description": "Per-user API token management." },
+    { "name": "Admin",        "description": "User management (requires isAdmin=true)." }
   ]
 }

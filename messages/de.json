@@ -136,5 +136,30 @@
       "draft": "Entwurf"
     },
     "footer_note": "Dies ist eine schreibgeschützte Ansicht. Nur Christian kann Änderungen vornehmen."
+  },
+  "admin": {
+    "title": "Benutzerverwaltung",
+    "users": "Benutzer",
+    "is_admin": "Admin",
+    "loading": "Lade Benutzer...",
+    "error_load": "Fehler beim Laden der Benutzer.",
+    "error_update": "Fehler beim Aktualisieren des Admin-Status.",
+    "last_admin_error": "Mindestens ein Administrator ist erforderlich."
+  },
+  "token": {
+    "title": "API-Token",
+    "description": "Persönlichen API-Token für LLM-Integrationen generieren.",
+    "generate": "Token generieren",
+    "revoke": "Token widerrufen",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "loading": "Lädt...",
+    "created": "Erstellt",
+    "last_used": "Zuletzt verwendet",
+    "never_used": "Nie",
+    "show_once_warning": "Kopiere diesen Token jetzt — er wird nicht erneut angezeigt.",
+    "confirm_revoke": "Diesen API-Token widerrufen? Alle Integrationen, die ihn verwenden, funktionieren dann nicht mehr.",
+    "confirm_regenerate": "Der bestehende Token wird widerrufen und ein neuer erstellt. Fortfahren?",
+    "no_token": "Noch kein API-Token generiert."
   }
 }

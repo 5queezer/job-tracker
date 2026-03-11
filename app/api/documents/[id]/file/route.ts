@@ -1,30 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { requireAuthOrToken } from "@/lib/session";
+import { requireAuth } from "@/lib/session";
 import { downloadFile, fileExists } from "@/lib/storage";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  // Allow access via PUBLIC_READ_TOKEN query param (share page / readonly links)
   const queryToken = request.nextUrl.searchParams.get("token");
   const publicToken = process.env.PUBLIC_READ_TOKEN;
   const isPublicShare = publicToken && queryToken === publicToken;
 
-  let userId: string | null = null;
+  let readScopeUserId: string | null = null;
 
   if (!isPublicShare) {
-    const auth = await requireAuthOrToken(request);
+    const auth = await requireAuth();
     if (!auth) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    userId = auth.userId;
+    readScopeUserId = auth.readScopeUserId;
   }
 
   const { id } = await params;
-
-  const document = await getDb().getDocument(id, userId);
+  const document = await getDb().getDocument(id, readScopeUserId);
   if (!document) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }

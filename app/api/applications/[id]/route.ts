@@ -1,19 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { requireAuthOrToken } from "@/lib/session";
-import { requireUserId } from "@/lib/tenant";
+import { requireAuth } from "@/lib/session";
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuthOrToken(request);
+  const auth = await requireAuth();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { id } = await params;
-  const application = await getDb().getApplication(id, auth.userId);
+  const application = await getDb().getApplication(id, auth.readScopeUserId);
 
   if (!application) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -26,23 +25,16 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuthOrToken(request);
+  const auth = await requireAuth();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let userId: string;
-  try {
-    userId = requireUserId(auth.userId);
-  } catch {
-    return NextResponse.json({ error: "Session required" }, { status: 403 });
   }
 
   const { id } = await params;
   const body = await request.json();
   const { company, role, status, appliedAt, lastContact, followUpAt, notes, jobDescription, resumeId } = body;
 
-  const application = await getDb().updateApplication(id, userId, {
+  const application = await getDb().updateApplication(id, auth.userId, {
     ...(company !== undefined && { company: String(company).slice(0, 255) }),
     ...(role !== undefined && { role: String(role).slice(0, 255) }),
     ...(status !== undefined && { status }),
@@ -68,23 +60,16 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuthOrToken(request);
+  const auth = await requireAuth();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let userId: string;
-  try {
-    userId = requireUserId(auth.userId);
-  } catch {
-    return NextResponse.json({ error: "Session required" }, { status: 403 });
-  }
-
   const { id } = await params;
-  await getDb().deleteApplication(id, userId);
+  await getDb().deleteApplication(id, auth.userId);
 
   return NextResponse.json({ success: true });
 }

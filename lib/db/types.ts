@@ -49,6 +49,23 @@ export interface UserRecord {
   id: string;
   name: string | null;
   email: string;
+  isAdmin: boolean;
+}
+
+export interface ApiTokenRecord {
+  id: string;
+  userId: string;
+  tokenHash: string;
+  name: string;
+  createdAt: Date;
+  lastUsedAt: Date | null;
+}
+
+export interface ApiTokenInfo {
+  id: string;
+  name: string;
+  createdAt: Date;
+  lastUsedAt: Date | null;
 }
 
 // ── Input types (passed into adapter) ────────────────────────────────────────

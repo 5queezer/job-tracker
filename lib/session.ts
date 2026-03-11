@@ -1,22 +1,49 @@
 import { headers } from "next/headers";
 import { auth } from "./auth";
-import { NextRequest } from "next/server";
+import { prisma } from "./prisma";
+import { getDb } from "./db";
+import { hashApiToken } from "./token";
 
 export type SessionUser = {
   id: string;
   name: string | null;
   email: string;
   image: string | null;
+  isAdmin: boolean;
 };
 
-/** Result from requireAuth() — always has a real user */
 export type SessionAuthResult = {
   userId: string;
+  /** Use for read-only list/get operations. Null means global read access. */
+  readScopeUserId: string | null;
   user: SessionUser;
 };
 
-/** Result from requireAuthOrToken() — may be admin token (no user) */
-export type AuthResult = SessionAuthResult | { userId: null };
+function parseAllowedEmails(): string[] {
+  return (process.env.ALLOWED_EMAIL ?? "")
+    .split(",")
+    .map((email) => email.trim())
+    .filter(Boolean);
+}
+
+async function maybeBootstrapFirstAdmin(userId: string, email: string): Promise<boolean> {
+  const allowedEmails = parseAllowedEmails();
+  if (!allowedEmails.includes(email)) {
+    return false;
+  }
+
+  const adminCount = await prisma.user.count({ where: { isAdmin: true } });
+  if (adminCount > 0) {
+    return false;
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { isAdmin: true },
+  });
+
+  return true;
+}
 
 export async function getSession() {
   return auth.api.getSession({
@@ -25,53 +52,86 @@ export async function getSession() {
 }
 
 /**
- * Requires a valid session. If ALLOWED_EMAIL is set (comma-separated list),
- * only those emails are permitted. If unset, any Google-authenticated user is allowed.
- *
- * Returns { userId, user } on success, null on failure.
+ * Requires a valid session or Bearer token. If ALLOWED_EMAIL is set
+ * (comma-separated list), only those emails are permitted for session auth.
+ * The first allowed user is bootstrapped as admin if no admin exists yet.
  */
 export async function requireAuth(): Promise<SessionAuthResult | null> {
+  // 1. Check Bearer token
+  const headerList = await headers();
+  const authHeader = headerList.get("authorization");
+  if (authHeader?.startsWith("Bearer ")) {
+    return authenticateBearer(authHeader.slice(7));
+  }
+
+  // 2. Fall back to session cookie
+  return authenticateSession();
+}
+
+async function authenticateBearer(raw: string): Promise<SessionAuthResult | null> {
+  const hash = hashApiToken(raw);
+  const token = await getDb().getApiTokenByHash(hash);
+  if (!token) return null;
+
+  const user = await prisma.user.findUnique({
+    where: { id: token.userId },
+    select: { id: true, name: true, email: true, image: true, isAdmin: true },
+  });
+  if (!user) return null;
+
+  // Fire-and-forget: update lastUsedAt
+  getDb().touchApiTokenLastUsed(token.id).catch(() => {});
+
+  return {
+    userId: user.id,
+    readScopeUserId: user.isAdmin ? null : user.id,
+    user: {
+      id: user.id,
+      name: user.name ?? null,
+      email: user.email,
+      image: user.image ?? null,
+      isAdmin: user.isAdmin,
+    },
+  };
+}
+
+async function authenticateSession(): Promise<SessionAuthResult | null> {
   const session = await getSession();
   if (!session) return null;
 
-  const allowedEmails = process.env.ALLOWED_EMAIL;
-  if (allowedEmails) {
-    const list = allowedEmails.split(",").map((e) => e.trim());
-    if (!list.includes(session.user.email)) {
-      return null;
-    }
+  const allowedEmails = parseAllowedEmails();
+  if (allowedEmails.length > 0 && !allowedEmails.includes(session.user.email)) {
+    return null;
+  }
+
+  const dbUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { isAdmin: true },
+  });
+
+  let isAdmin = dbUser?.isAdmin ?? false;
+  if (!isAdmin) {
+    isAdmin = await maybeBootstrapFirstAdmin(session.user.id, session.user.email);
   }
 
   return {
     userId: session.user.id,
+    readScopeUserId: isAdmin ? null : session.user.id,
     user: {
       id: session.user.id,
       name: session.user.name ?? null,
       email: session.user.email,
       image: (session.user as { image?: string | null }).image ?? null,
+      isAdmin,
     },
   };
 }
 
-/**
- * Accepts either a valid session or a valid ADMIN_API_TOKEN bearer token.
- * - Session: returns { userId: string, user: SessionUser }
- * - API token: returns { userId: null } (admin, no user scoping)
- * - Neither: returns null (unauthorized)
- */
-export async function requireAuthOrToken(
-  request: NextRequest
-): Promise<AuthResult | null> {
-  // 1. Check Bearer token first (fast path for API clients)
-  const authHeader = request.headers.get("authorization") ?? "";
-  if (authHeader.startsWith("Bearer ")) {
-    const token = authHeader.slice(7);
-    const adminToken = process.env.ADMIN_API_TOKEN;
-    if (adminToken && token === adminToken) {
-      return { userId: null };
-    }
+export async function requireAdmin(): Promise<SessionAuthResult | null> {
+  const session = await requireAuth();
+  if (!session || !session.user.isAdmin) {
+    return null;
   }
 
-  // 2. Fall back to session-based auth
-  return requireAuth();
+  return session;
 }

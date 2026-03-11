@@ -1,33 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
-import { requireAuthOrToken } from "@/lib/session";
-import { requireUserId } from "@/lib/tenant";
+import { requireAuth } from "@/lib/session";
 import { deleteFile } from "@/lib/storage";
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuthOrToken(request);
+  const auth = await requireAuth();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let userId: string;
-  try {
-    userId = requireUserId(auth.userId);
-  } catch {
-    return NextResponse.json({ error: "Session required" }, { status: 403 });
-  }
-
   const { id } = await params;
 
-  const document = await getDb().deleteDocument(id, userId);
+  const document = await getDb().deleteDocument(id, auth.userId);
   if (!document) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  // Remove file from storage (best-effort)
   await deleteFile(document.filename);
 
   return new NextResponse(null, { status: 204 });
@@ -37,16 +28,9 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuthOrToken(request);
+  const auth = await requireAuth();
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  let userId: string;
-  try {
-    userId = requireUserId(auth.userId);
-  } catch {
-    return NextResponse.json({ error: "Session required" }, { status: 403 });
   }
 
   const { id } = await params;
@@ -57,6 +41,6 @@ export async function PATCH(
     return NextResponse.json({ error: "applicationIds must be an array" }, { status: 400 });
   }
 
-  const document = await getDb().updateDocumentLinks(id, userId, applicationIds);
+  const document = await getDb().updateDocumentLinks(id, auth.userId, applicationIds);
   return NextResponse.json(document);
 }

@@ -136,5 +136,30 @@
       "draft": "Draft"
     },
     "footer_note": "This is a read-only view. Only Christian can make changes."
+  },
+  "admin": {
+    "title": "User Management",
+    "users": "Users",
+    "is_admin": "Admin",
+    "loading": "Loading users...",
+    "error_load": "Failed to load users.",
+    "error_update": "Failed to update admin status.",
+    "last_admin_error": "At least one administrator is required."
+  },
+  "token": {
+    "title": "API Token",
+    "description": "Generate a personal API token for LLM integrations.",
+    "generate": "Generate Token",
+    "revoke": "Revoke Token",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "loading": "Loading...",
+    "created": "Created",
+    "last_used": "Last used",
+    "never_used": "Never",
+    "show_once_warning": "Copy this token now — it will not be shown again.",
+    "confirm_revoke": "Revoke this API token? Any integrations using it will stop working.",
+    "confirm_regenerate": "This will revoke your existing token and create a new one. Continue?",
+    "no_token": "No API token generated yet."
   }
 }
