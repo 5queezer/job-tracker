@@ -29,6 +29,7 @@ export interface Application {
   followUpAt: string | null;
   notes: string | null;
   jobDescription: string | null;
+  source: string | null;
   resumeId: string | null;
   createdAt: string;
   updatedAt: string;
@@ -70,6 +71,18 @@ export const STATUS_ORDER: ApplicationStatus[] = [
   "rejected",
   "ghost",
 ];
+
+// Preset source values for the source field
+export const SOURCE_PRESETS = [
+  "linkedin",
+  "indeed",
+  "company-site",
+  "referral",
+  "recruiter",
+  "email",
+  "ams",
+  "other",
+] as const;
 
 // Legacy: for any place that still needs a label+color pair
 export const STATUS_OPTIONS: { value: ApplicationStatus; label: string; color: string }[] = [
