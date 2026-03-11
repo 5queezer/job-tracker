@@ -3,6 +3,8 @@ import type {
   ContactRecord,
   DocumentRecord,
   UserRecord,
+  ApiTokenRecord,
+  ApiTokenInfo,
   CreateApplicationInput,
   UpdateApplicationInput,
   CreateContactInput,
@@ -39,4 +41,11 @@ export interface DatabaseAdapter {
   getUser(id: string): Promise<UserRecord | null>;
   listUsers(): Promise<UserRecord[]>;
   updateUserAdmin(id: string, isAdmin: boolean): Promise<UserRecord>;
+
+  // ── API Tokens ─────────────────────────────────────────────────────────
+  getApiTokenByHash(tokenHash: string): Promise<ApiTokenRecord | null>;
+  getApiToken(userId: string): Promise<ApiTokenInfo | null>;
+  createApiToken(userId: string, tokenHash: string, name?: string): Promise<ApiTokenInfo>;
+  deleteApiToken(userId: string): Promise<void>;
+  touchApiTokenLastUsed(id: string): Promise<void>;
 }

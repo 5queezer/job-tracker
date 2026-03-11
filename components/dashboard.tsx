@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { AdminUsers } from "./admin-users";
+import { ApiToken } from "./api-token";
 
 interface DashboardProps {
   user: {
@@ -79,6 +80,7 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("table");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
+  const [isApiTokenPanelOpen, setIsApiTokenPanelOpen] = useState(false);
 
   const { data: applications = [], isLoading, isError } = useQuery({
     queryKey: ["applications"],
@@ -171,6 +173,14 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
                   🛡️ Admin
                 </button>
               )}
+              <button
+                onClick={() => setIsApiTokenPanelOpen((v) => !v)}
+                className={`flex items-center min-h-[44px] px-2 text-sm font-medium transition-colors ${
+                  isApiTokenPanelOpen ? "text-blue-600" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                }`}
+              >
+                🔑 API
+              </button>
               <Link
                 href="/documents"
                 className="flex items-center min-h-[44px] px-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors"
@@ -268,6 +278,12 @@ export function Dashboard({ user, shareUrl }: DashboardProps) {
           <StatCard label={ts("offers")} value={stats.offers} color="green" />
           <StatCard label={ts("ghosted")} value={stats.ghosted} color="gray" />
         </div>
+
+        {isApiTokenPanelOpen && (
+          <div className="mb-8">
+            <ApiToken />
+          </div>
+        )}
 
         {isAdminPanelOpen && (
           <div className="mb-8">

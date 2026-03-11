@@ -5,6 +5,8 @@ import type {
   ContactRecord,
   DocumentRecord,
   UserRecord,
+  ApiTokenRecord,
+  ApiTokenInfo,
   CreateApplicationInput,
   UpdateApplicationInput,
   CreateContactInput,
@@ -213,6 +215,44 @@ export class PrismaAdapter implements DatabaseAdapter {
       where: { id },
       data: { isAdmin },
       select: { id: true, name: true, email: true, isAdmin: true },
+    });
+  }
+
+  // API Tokens
+
+  async getApiTokenByHash(tokenHash: string): Promise<ApiTokenRecord | null> {
+    const row = await prisma.userApiToken.findUnique({
+      where: { tokenHash },
+    });
+    return row ? { ...row, id: sid(row.id) } : null;
+  }
+
+  async getApiToken(userId: string): Promise<ApiTokenInfo | null> {
+    const row = await prisma.userApiToken.findFirst({
+      where: { userId },
+      select: { id: true, name: true, createdAt: true, lastUsedAt: true },
+    });
+    return row ? { ...row, id: sid(row.id) } : null;
+  }
+
+  async createApiToken(userId: string, tokenHash: string, name = "default"): Promise<ApiTokenInfo> {
+    // Delete existing token first (one token per user)
+    await prisma.userApiToken.deleteMany({ where: { userId } });
+    const row = await prisma.userApiToken.create({
+      data: { userId, tokenHash, name },
+      select: { id: true, name: true, createdAt: true, lastUsedAt: true },
+    });
+    return { ...row, id: sid(row.id) };
+  }
+
+  async deleteApiToken(userId: string): Promise<void> {
+    await prisma.userApiToken.deleteMany({ where: { userId } });
+  }
+
+  async touchApiTokenLastUsed(id: string): Promise<void> {
+    await prisma.userApiToken.update({
+      where: { id: nid(id) },
+      data: { lastUsedAt: new Date() },
     });
   }
 }

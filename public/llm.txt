@@ -11,6 +11,14 @@ Multi-tenant: each user only sees their own data. Admin users (isAdmin flag) byp
 - Session managed by better-auth (httpOnly cookies)
 - All API operations require a valid session
 
+### Per-user API token (Bearer)
+- Each user can generate a personal API token in the dashboard
+- Header: `Authorization: Bearer <token>`
+- Token is scoped to the owner's data only
+- Admin users' tokens get cross-tenant read access
+- Token is shown once on creation, stored as SHA-256 hash in the database
+- Generate: POST /api/token (session required), Revoke: DELETE /api/token
+
 ### Admin privileges
 - Admin access is per-user, stored as `isAdmin` boolean in the database
 - The first user matching `ALLOWED_EMAIL` is automatically bootstrapped as admin on first login
@@ -30,27 +38,34 @@ Multi-tenant: each user only sees their own data. Admin users (isAdmin flag) byp
 ### Applications
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| GET | /api/applications | session | List all (filtered by userId unless admin) |
-| POST | /api/applications | session | Create application |
-| GET | /api/applications/:id | session | Get single |
-| PATCH | /api/applications/:id | session | Update |
-| DELETE | /api/applications/:id | session | Delete |
+| GET | /api/applications | session or token | List all (filtered by userId unless admin) |
+| POST | /api/applications | session or token | Create application |
+| GET | /api/applications/:id | session or token | Get single |
+| PATCH | /api/applications/:id | session or token | Update |
+| DELETE | /api/applications/:id | session or token | Delete |
 
 ### Contacts (per application)
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| GET | /api/applications/:id/contacts | session | List contacts |
-| POST | /api/applications/:id/contacts | session | Create contact |
-| PATCH | /api/applications/:id/contacts/:contactId | session | Update contact |
-| DELETE | /api/applications/:id/contacts/:contactId | session | Delete contact |
+| GET | /api/applications/:id/contacts | session or token | List contacts |
+| POST | /api/applications/:id/contacts | session or token | Create contact |
+| PATCH | /api/applications/:id/contacts/:contactId | session or token | Update contact |
+| DELETE | /api/applications/:id/contacts/:contactId | session or token | Delete contact |
 
 ### Documents
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| GET | /api/documents | session | List documents |
-| POST | /api/documents | session | Upload (multipart/form-data, field: file) |
-| DELETE | /api/documents/:id | session | Delete |
-| GET | /api/documents/:id/file | session or share token | Download file |
+| GET | /api/documents | session or token | List documents |
+| POST | /api/documents | session or token | Upload (multipart/form-data, field: file) |
+| DELETE | /api/documents/:id | session or token | Delete |
+| GET | /api/documents/:id/file | session, token, or share token | Download file |
+
+### Token management
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | /api/token | session | Get current token metadata |
+| POST | /api/token | session | Generate new token (revokes existing) |
+| DELETE | /api/token | session | Revoke token |
 
 ### Admin (requires isAdmin=true)
 | Method | Path | Auth | Description |
@@ -63,10 +78,10 @@ Multi-tenant: each user only sees their own data. Admin users (isAdmin flag) byp
 ## Application status values
 `draft` | `applied` | `waiting` | `interview` | `offer` | `rejected` | `ghost`
 
-## Example: create application
+## Example: create application via API token
 ```
 POST /api/applications
-Cookie: better-auth.session_token=<session>
+Authorization: Bearer jt_<your-token>
 Content-Type: application/json
 
 {

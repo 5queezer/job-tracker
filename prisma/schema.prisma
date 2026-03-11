@@ -63,6 +63,19 @@ model User {
   accounts      Account[]
   applications  Application[]
   documents     Document[]
+  apiTokens     UserApiToken[]
+}
+
+model UserApiToken {
+  id         Int       @id @default(autoincrement())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash  String    @unique
+  name       String    @default("default")
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
+
+  @@index([userId])
 }
 
 model Session {
