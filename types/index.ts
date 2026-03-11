@@ -61,6 +61,20 @@ export const STATUS_ORDER: ApplicationStatus[] = [
   "rejected",
 ];
 
+const STATUS_ALIASES: Record<string, ApplicationStatus> = {
+  waiting: "applied",
+  draft: "applied",
+  ghost: "rejected",
+};
+
+export function normalizeStatus(status: string | null | undefined): ApplicationStatus {
+  const normalized = String(status ?? "").trim().toLowerCase();
+  if ((STATUS_ORDER as string[]).includes(normalized)) {
+    return normalized as ApplicationStatus;
+  }
+  return STATUS_ALIASES[normalized] ?? "applied";
+}
+
 // Preset source values for the source field
 export const SOURCE_PRESETS = [
   "linkedin",

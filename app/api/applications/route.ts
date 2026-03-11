@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { requireAuth } from "@/lib/session";
+import { normalizeStatus } from "@/types";
 
 export async function GET(_request: NextRequest) {
   const auth = await requireAuth();
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
   const application = await getDb().createApplication(auth.userId, {
     company: String(company).slice(0, 255),
     role: String(role).slice(0, 255),
-    status: status || "applied",
+    status: normalizeStatus(status || "applied"),
     appliedAt: appliedAt ? new Date(appliedAt) : null,
     lastContact: lastContact ? new Date(lastContact) : null,
     followUpAt: followUpAt ? new Date(followUpAt) : null,

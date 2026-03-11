@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { normalizeStatus } from "@/types";
 import type { DatabaseAdapter } from "./adapter";
 import type {
   ApplicationRecord,
@@ -32,6 +33,7 @@ function mapApp(a: { id: number; userId: string; company: string; role: string; 
   return {
     ...a,
     id: sid(a.id),
+    status: normalizeStatus(a.status),
     contacts: a.contacts?.map(mapContact),
   };
 }
@@ -72,7 +74,7 @@ export class PrismaAdapter implements DatabaseAdapter {
 
   async createApplication(userId: string, data: CreateApplicationInput): Promise<ApplicationRecord> {
     const row = await prisma.application.create({
-      data: { userId, ...data },
+      data: { userId, ...data, status: normalizeStatus(data.status) },
       include: { contacts: true },
     });
     return mapApp(row);
@@ -81,7 +83,10 @@ export class PrismaAdapter implements DatabaseAdapter {
   async updateApplication(id: string, userId: string, data: UpdateApplicationInput): Promise<ApplicationRecord> {
     const row = await prisma.application.update({
       where: { id: nid(id), userId },
-      data,
+      data: {
+        ...data,
+        ...(data.status !== undefined ? { status: normalizeStatus(data.status) } : {}),
+      },
       include: { contacts: true },
     });
     return mapApp(row);

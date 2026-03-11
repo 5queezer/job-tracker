@@ -1,6 +1,7 @@
 import { getFirestore, Timestamp, FieldValue } from "firebase-admin/firestore";
 import { getApps, initializeApp, applicationDefault } from "firebase-admin/app";
 import { prisma } from "@/lib/prisma";
+import { normalizeStatus } from "@/types";
 import type { DatabaseAdapter } from "./adapter";
 import type {
   ApplicationRecord,
@@ -41,7 +42,7 @@ function mapApp(id: string, data: FirebaseFirestore.DocumentData): ApplicationRe
     userId: data.userId,
     company: data.company,
     role: data.role,
-    status: data.status,
+    status: normalizeStatus(data.status),
     appliedAt: toDate(data.appliedAt),
     lastContact: toDate(data.lastContact),
     followUpAt: toDate(data.followUpAt),
@@ -128,7 +129,7 @@ export class FirestoreAdapter implements DatabaseAdapter {
       userId,
       company: data.company,
       role: data.role,
-      status: data.status,
+      status: normalizeStatus(data.status),
       appliedAt: toTimestamp(data.appliedAt),
       lastContact: toTimestamp(data.lastContact),
       followUpAt: toTimestamp(data.followUpAt),
@@ -153,7 +154,7 @@ export class FirestoreAdapter implements DatabaseAdapter {
     const update: Record<string, unknown> = { updatedAt: FieldValue.serverTimestamp() };
     if (data.company !== undefined) update.company = data.company;
     if (data.role !== undefined) update.role = data.role;
-    if (data.status !== undefined) update.status = data.status;
+    if (data.status !== undefined) update.status = normalizeStatus(data.status);
     if (data.appliedAt !== undefined) update.appliedAt = toTimestamp(data.appliedAt);
     if (data.lastContact !== undefined) update.lastContact = toTimestamp(data.lastContact);
     if (data.followUpAt !== undefined) update.followUpAt = toTimestamp(data.followUpAt);

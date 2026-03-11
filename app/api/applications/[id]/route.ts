@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db";
 import { requireAuth } from "@/lib/session";
+import { normalizeStatus } from "@/types";
 
 export async function GET(
   _request: NextRequest,
@@ -37,7 +38,7 @@ export async function PATCH(
   const application = await getDb().updateApplication(id, auth.userId, {
     ...(company !== undefined && { company: String(company).slice(0, 255) }),
     ...(role !== undefined && { role: String(role).slice(0, 255) }),
-    ...(status !== undefined && { status }),
+    ...(status !== undefined && { status: normalizeStatus(status) }),
     ...(appliedAt !== undefined && {
       appliedAt: appliedAt ? new Date(appliedAt) : null,
     }),
