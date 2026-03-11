@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 
 const STORAGE_KEY = "bossMode";
 const DEFAULT_TITLE = "Job Tracker";
-const BOSS_TITLE = "Workspace";
+const BOSS_TITLE = "Pipeline";
 
 interface BossModeContextValue {
   enabled: boolean;
