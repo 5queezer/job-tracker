@@ -8,11 +8,13 @@ import type {
   UserRecord,
   ApiTokenRecord,
   ApiTokenInfo,
+  ShareLinkRecord,
   CreateApplicationInput,
   UpdateApplicationInput,
   CreateContactInput,
   UpdateContactInput,
   CreateDocumentInput,
+  CreateShareLinkInput,
 } from "./types";
 
 // ── Helpers: convert Prisma int IDs ↔ string IDs ────────────────────────────
@@ -205,6 +207,7 @@ export class PrismaAdapter implements DatabaseAdapter {
   async deleteDocument(id: string, userId: string): Promise<DocumentRecord | null> {
     const doc = await prisma.document.findFirst({ where: { id: nid(id), userId } });
     if (!doc) return null;
+    await prisma.shareLink.deleteMany({ where: { userId, targetType: "document", targetId: id } });
     await prisma.document.delete({ where: { id: nid(id), userId } });
     return mapDoc(doc);
   }
@@ -270,5 +273,30 @@ export class PrismaAdapter implements DatabaseAdapter {
       where: { id: nid(id) },
       data: { lastUsedAt: new Date() },
     });
+  }
+
+  // Share Links
+
+  async getShareLinkByCode(code: string): Promise<ShareLinkRecord | null> {
+    const row = await prisma.shareLink.findUnique({ where: { code } });
+    return row ? { ...row, id: sid(row.id) } : null;
+  }
+
+  async findShareLink(userId: string, targetType: string, targetId: string | null): Promise<ShareLinkRecord | null> {
+    const row = await prisma.shareLink.findFirst({
+      where: { userId, targetType, targetId },
+    });
+    return row ? { ...row, id: sid(row.id) } : null;
+  }
+
+  async createShareLink(userId: string, data: CreateShareLinkInput): Promise<ShareLinkRecord> {
+    const row = await prisma.shareLink.create({
+      data: { userId, ...data },
+    });
+    return { ...row, id: sid(row.id) };
+  }
+
+  async deleteShareLink(id: string, userId: string): Promise<void> {
+    await prisma.shareLink.delete({ where: { id: nid(id), userId } });
   }
 }
