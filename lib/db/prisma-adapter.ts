@@ -191,6 +191,17 @@ export class PrismaAdapter implements DatabaseAdapter {
     return mapDoc(row);
   }
 
+  async renameDocument(id: string, userId: string, newName: string): Promise<DocumentRecord | null> {
+    const existing = await prisma.document.findFirst({ where: { id: nid(id), userId } });
+    if (!existing) return null;
+    const row = await prisma.document.update({
+      where: { id: nid(id), userId },
+      data: { originalName: newName },
+      include: { applications: { select: { id: true, company: true, role: true } } },
+    });
+    return mapDoc(row);
+  }
+
   async deleteDocument(id: string, userId: string): Promise<DocumentRecord | null> {
     const doc = await prisma.document.findFirst({ where: { id: nid(id), userId } });
     if (!doc) return null;
