@@ -3,39 +3,6 @@
     "title": "Job Tracker",
     "subtitle": "Your applications at a glance"
   },
-  "boss": {
-    "toggle": "Boss mode",
-    "on": "On",
-    "off": "Off",
-    "title": "Pipeline",
-    "section": "Entries",
-    "new_entry": "New Entry",
-    "status": {
-      "inbound": "Queue",
-      "applied": "Active",
-      "interview": "Review",
-      "offer": "Ready",
-      "rejected": "Closed"
-    },
-    "stats": {
-      "active": "In progress",
-      "offers": "Ready",
-      "rejected": "Closed"
-    },
-    "table": {
-      "company": "Account",
-      "role": "Item",
-      "status": "Stage",
-      "source": "Channel"
-    },
-    "privacy": {
-      "company": "Private company",
-      "role": "Private role",
-      "notes": "Hidden notes",
-      "contact": "Private contact",
-      "source": "Private source"
-    }
-  },
   "nav": {
     "logout": "Sign out",
     "table_view": "Table",
@@ -186,8 +153,19 @@
     "self_demote_error": "You cannot remove your own admin status."
   },
   "settings": {
-    "title": "Admin Settings",
+    "title": "Settings",
     "back": "Back to dashboard",
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize the look and feel of your application.",
+      "app_title": "Application Title",
+      "app_subtitle": "Subtitle",
+      "app_subtitle_placeholder": "e.g. Your applications at a glance",
+      "share_owner_name": "Share Page Name",
+      "share_owner_placeholder": "e.g. John Doe",
+      "share_owner_hint": "Displayed on the public share page as the owner of the applications.",
+      "saved": "Settings saved!"
+    },
     "audit": {
       "title": "Audit Log",
       "loading": "Loading audit log...",

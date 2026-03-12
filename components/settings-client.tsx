@@ -2,11 +2,12 @@
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import { Settings } from "lucide-react";
 import { LanguageSwitcher } from "./language-switcher";
 import { ThemeSwitcher } from "./theme-switcher";
 import { AdminUsers } from "./admin-users";
 import { AuditLog } from "./audit-log";
+import { AppSettingsPanel } from "./app-settings";
 
 interface SettingsClientProps {
   user: {
@@ -27,7 +28,7 @@ export function SettingsClient({ user }: SettingsClientProps) {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-3">
             <div className="flex items-center gap-3">
-              <ShieldCheck className="w-5 h-5 text-blue-600" />
+              <Settings className="w-5 h-5 text-blue-600" />
               <h1 className="text-lg font-bold text-gray-900 dark:text-white">
                 {t("title")}
               </h1>
@@ -55,6 +56,7 @@ export function SettingsClient({ user }: SettingsClientProps) {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <AppSettingsPanel />
         <AdminUsers currentUserId={user.id} />
         <AuditLog />
       </main>

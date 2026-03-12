@@ -3,39 +3,6 @@
     "title": "Job Tracker",
     "subtitle": "Deine Bewerbungen im Überblick"
   },
-  "boss": {
-    "toggle": "Boss-Modus",
-    "on": "An",
-    "off": "Aus",
-    "title": "Pipeline",
-    "section": "Einträge",
-    "new_entry": "Neuer Eintrag",
-    "status": {
-      "inbound": "Queue",
-      "applied": "Aktiv",
-      "interview": "Prüfung",
-      "offer": "Bereit",
-      "rejected": "Geschlossen"
-    },
-    "stats": {
-      "active": "In Arbeit",
-      "offers": "Bereit",
-      "rejected": "Geschlossen"
-    },
-    "table": {
-      "company": "Konto",
-      "role": "Eintrag",
-      "status": "Phase",
-      "source": "Kanal"
-    },
-    "privacy": {
-      "company": "Private Firma",
-      "role": "Private Rolle",
-      "notes": "Versteckte Notizen",
-      "contact": "Privater Kontakt",
-      "source": "Private Quelle"
-    }
-  },
   "nav": {
     "logout": "Abmelden",
     "table_view": "Tabelle",
@@ -186,8 +153,19 @@
     "self_demote_error": "Du kannst deinen eigenen Admin-Status nicht entfernen."
   },
   "settings": {
-    "title": "Admin-Einstellungen",
+    "title": "Einstellungen",
     "back": "Zurück zum Dashboard",
+    "appearance": {
+      "title": "Erscheinungsbild",
+      "description": "Passe das Aussehen deiner Anwendung an.",
+      "app_title": "Anwendungstitel",
+      "app_subtitle": "Untertitel",
+      "app_subtitle_placeholder": "z.B. Deine Bewerbungen im Überblick",
+      "share_owner_name": "Name auf der Teilen-Seite",
+      "share_owner_placeholder": "z.B. Max Mustermann",
+      "share_owner_hint": "Wird auf der öffentlichen Teilen-Seite als Inhaber der Bewerbungen angezeigt.",
+      "saved": "Einstellungen gespeichert!"
+    },
     "audit": {
       "title": "Aktivitätsprotokoll",
       "loading": "Lade Protokoll...",
