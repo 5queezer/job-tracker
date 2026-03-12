@@ -53,21 +53,48 @@ async function deleteDocument(id: string): Promise<void> {
   if (!res.ok) throw new Error("Failed to delete document");
 }
 
-function CopyShareLink({ docId }: { docId: string }) {
+function CopyShareLink({ docId, docName }: { docId: string; docName: string }) {
   const [copied, setCopied] = useState(false);
 
-  async function handleCopy() {
+  async function handleShare() {
     const res = await fetch("/api/config/public-token");
     const { token } = await res.json();
     const url = `${window.location.origin}/api/documents/${docId}/file?token=${token}`;
-    await navigator.clipboard.writeText(url);
+
+    // Use Web Share API on mobile (well-supported on iOS/Android)
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: docName, url });
+        return;
+      } catch (err) {
+        // User cancelled or share failed – fall through to clipboard
+        if (err instanceof Error && err.name === "AbortError") return;
+      }
+    }
+
+    // Clipboard fallback (works on desktop and some mobile browsers)
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // Final fallback: temporary textarea for older browsers
+      const ta = document.createElement("textarea");
+      ta.value = url;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
 
   return (
     <button
-      onClick={handleCopy}
+      onClick={handleShare}
       title="Share-Link kopieren"
       className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm font-medium transition-colors"
     >
@@ -252,7 +279,7 @@ export function DocumentsClient({ user }: DocumentsClientProps) {
                     >
                       Download
                     </a>
-                    <CopyShareLink docId={doc.id} />
+                    <CopyShareLink docId={doc.id} docName={doc.originalName} />
                     <button
                       onClick={() => handleDelete(doc.id, doc.originalName)}
                       className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors"
