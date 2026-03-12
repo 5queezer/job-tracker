@@ -23,9 +23,9 @@ function StatusBadge({ status }: { status: ApplicationStatus }) {
   const t = useTranslations("status");
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium boss-status-badge ${STATUS_COLORS[status] || "bg-gray-100 text-gray-600"}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[status] || "bg-gray-100 text-gray-600"}`}
     >
-      <span className="boss-blur">{t(status)}</span>
+      {t(status)}
     </span>
   );
 }
@@ -38,10 +38,10 @@ function ContactPills({ contacts }: { contacts?: Contact[] }) {
         <span
           key={c.id}
           title={[c.role, c.email].filter(Boolean).join(" · ")}
-          className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-500/20 dark:text-indigo-400 whitespace-nowrap boss-sensitive-pill"
+          className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-500/20 dark:text-indigo-400 whitespace-nowrap"
         >
-          <span className="boss-blur">{c.name}</span>
-          {c.role && <span className="ml-1 text-indigo-500 dark:text-indigo-400 font-normal boss-blur">· {c.role}</span>}
+          {c.name}
+          {c.role && <span className="ml-1 text-indigo-500 dark:text-indigo-400 font-normal">· {c.role}</span>}
         </span>
       ))}
     </div>
@@ -94,10 +94,10 @@ function MobileApplicationCard({ app, onEdit, onDelete, onArchive, showArchived 
     <article className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="truncate text-base font-semibold text-gray-900 dark:text-white boss-blur">
+          <h3 className="truncate text-base font-semibold text-gray-900 dark:text-white">
             {app.company || <span className="italic font-normal text-gray-400 dark:text-gray-500">—</span>}
           </h3>
-          <p className="mt-0.5 text-sm text-gray-600 dark:text-gray-300 boss-blur">{app.role}</p>
+          <p className="mt-0.5 text-sm text-gray-600 dark:text-gray-300">{app.role}</p>
         </div>
         <div className="shrink-0">
           <StatusBadge status={app.status} />
@@ -119,12 +119,12 @@ function MobileApplicationCard({ app, onEdit, onDelete, onArchive, showArchived 
         </div>
         <div>
           <div className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">{t("source")}</div>
-          <div className="mt-1 text-gray-700 dark:text-gray-300 boss-blur">{app.source || "—"}</div>
+          <div className="mt-1 text-gray-700 dark:text-gray-300">{app.source || "—"}</div>
         </div>
       </div>
 
       {app.notes && (
-        <div className="mt-3 rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-600 dark:bg-gray-900/60 dark:text-gray-300 boss-blur">
+        <div className="mt-3 rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-600 dark:bg-gray-900/60 dark:text-gray-300">
           {app.notes}
         </div>
       )}
@@ -174,7 +174,6 @@ export function ApplicationTable({ applications, onEdit, onDelete, onArchive, sh
   const t = useTranslations("table");
   const ta = useTranslations("actions");
   const ts = useTranslations("status");
-  const tBoss = useTranslations("boss");
   const locale = useLocale();
   const dateFnsLocale = locale === "de" ? de : enUS;
 
@@ -193,46 +192,26 @@ export function ApplicationTable({ applications, onEdit, onDelete, onArchive, sh
 
   const columns = [
     columnHelper.accessor("company", {
-      header: () => (
-        <>
-          <span className="boss-hide">{t("company")}</span>
-          <span className="boss-show">{tBoss("table.company")}</span>
-        </>
-      ),
+      header: t("company"),
       cell: (info) => (
-        <span className="font-medium text-gray-900 dark:text-white boss-blur">{info.getValue()}</span>
+        <span className="font-medium text-gray-900 dark:text-white">{info.getValue()}</span>
       ),
     }),
     columnHelper.accessor("role", {
-      header: () => (
-        <>
-          <span className="boss-hide">{t("role")}</span>
-          <span className="boss-show">{tBoss("table.role")}</span>
-        </>
-      ),
-      cell: (info) => <span className="text-gray-700 dark:text-gray-300 boss-blur">{info.getValue()}</span>,
+      header: t("role"),
+      cell: (info) => <span className="text-gray-700 dark:text-gray-300">{info.getValue()}</span>,
     }),
     columnHelper.accessor("status", {
-      header: () => (
-        <>
-          <span className="boss-hide">{t("status")}</span>
-          <span className="boss-show">{tBoss("table.status")}</span>
-        </>
-      ),
+      header: t("status"),
       cell: (info) => <StatusBadge status={info.getValue() as ApplicationStatus} />,
       filterFn: "equals",
     }),
     columnHelper.accessor("source", {
-      header: () => (
-        <>
-          <span className="boss-hide">{t("source")}</span>
-          <span className="boss-show">{tBoss("table.source")}</span>
-        </>
-      ),
+      header: t("source"),
       cell: (info) => {
         const val = info.getValue();
         return val ? (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800 dark:bg-cyan-500/20 dark:text-cyan-300 boss-sensitive-pill boss-blur">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800 dark:bg-cyan-500/20 dark:text-cyan-300">
             {val}
           </span>
         ) : (
@@ -261,7 +240,7 @@ export function ApplicationTable({ applications, onEdit, onDelete, onArchive, sh
       header: t("notes"),
       cell: (info) => (
         <span
-          className="text-gray-500 dark:text-gray-300 text-sm max-w-xs truncate block boss-blur"
+          className="text-gray-500 dark:text-gray-300 text-sm max-w-xs truncate block"
           title={info.getValue() || ""}
         >
           {info.getValue() || "—"}
@@ -420,7 +399,7 @@ export function ApplicationTable({ applications, onEdit, onDelete, onArchive, sh
                 return (
                   <tr
                     key={row.id}
-                    className={`border-b border-gray-50 dark:border-gray-700/50 hover:bg-blue-50/30 dark:hover:bg-blue-950/20 transition-colors boss-row-tone ${rowColor}`}
+                    className={`border-b border-gray-50 dark:border-gray-700/50 hover:bg-blue-50/30 dark:hover:bg-blue-950/20 transition-colors ${rowColor}`}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <td key={cell.id} className="px-4 py-3">
