@@ -53,6 +53,16 @@ async function deleteDocument(id: string): Promise<void> {
   if (!res.ok) throw new Error("Failed to delete document");
 }
 
+async function renameDocument({ id, originalName }: { id: string; originalName: string }): Promise<Document> {
+  const res = await fetch(`/api/documents/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ originalName }),
+  });
+  if (!res.ok) throw new Error("Failed to rename document");
+  return res.json();
+}
+
 function CopyShareLink({ docId, docName }: { docId: string; docName: string }) {
   const [copied, setCopied] = useState(false);
 
@@ -103,12 +113,51 @@ function CopyShareLink({ docId, docName }: { docId: string; docName: string }) {
   );
 }
 
+function InlineRename({ doc, onDone }: { doc: Document; onDone: () => void }) {
+  const queryClient = useQueryClient();
+  const [value, setValue] = useState(doc.originalName);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const mutation = useMutation({
+    mutationFn: renameDocument,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
+      onDone();
+    },
+  });
+
+  function submit() {
+    const trimmed = value.trim();
+    if (trimmed && trimmed !== doc.originalName) {
+      mutation.mutate({ id: doc.id, originalName: trimmed });
+    } else {
+      onDone();
+    }
+  }
+
+  return (
+    <input
+      ref={inputRef}
+      autoFocus
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={submit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") submit();
+        if (e.key === "Escape") onDone();
+      }}
+      className="font-medium text-gray-900 dark:text-white bg-transparent border border-blue-400 rounded px-1 py-0.5 outline-none w-full max-w-md"
+    />
+  );
+}
+
 export function DocumentsClient({ user }: DocumentsClientProps) {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
 
   const { data: documents = [], isLoading } = useQuery({
     queryKey: ["documents"],
@@ -253,7 +302,17 @@ export function DocumentsClient({ user }: DocumentsClientProps) {
                 >
                   <span className="text-2xl flex-shrink-0">{fileIcon(doc.mimeType)}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-900 dark:text-white truncate">{doc.originalName}</p>
+                    {renamingId === doc.id ? (
+                      <InlineRename doc={doc} onDone={() => setRenamingId(null)} />
+                    ) : (
+                      <p
+                        className="font-medium text-gray-900 dark:text-white truncate cursor-pointer"
+                        onDoubleClick={() => setRenamingId(doc.id)}
+                        title="Doppelklick zum Umbenennen"
+                      >
+                        {doc.originalName}
+                      </p>
+                    )}
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                       {formatBytes(doc.size)} ·{" "}
                       {format(new Date(doc.uploadedAt), "dd.MM.yyyy HH:mm", { locale: de })}
@@ -279,6 +338,13 @@ export function DocumentsClient({ user }: DocumentsClientProps) {
                     >
                       Download
                     </a>
+                    <button
+                      onClick={() => setRenamingId(doc.id)}
+                      title="Umbenennen"
+                      className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm font-medium transition-colors"
+                    >
+                      ✏️
+                    </button>
                     <CopyShareLink docId={doc.id} docName={doc.originalName} />
                     <button
                       onClick={() => handleDelete(doc.id, doc.originalName)}

@@ -57,6 +57,7 @@ Multi-tenant: each user only sees their own data. Admin users (isAdmin flag) byp
 |--------|------|------|-------------|
 | GET | /api/documents | session or token | List documents |
 | POST | /api/documents | session or token | Upload (multipart/form-data, field: file) |
+| PATCH | /api/documents/:id | session or token | Update: rename (`{ "originalName": "new.pdf" }`) or update links (`{ "applicationIds": [...] }`) |
 | DELETE | /api/documents/:id | session or token | Delete |
 | GET | /api/documents/:id/file | session, token, or share token | Download file |
 

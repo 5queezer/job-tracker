@@ -34,6 +34,8 @@ export interface DatabaseAdapter {
   createDocument(userId: string, data: CreateDocumentInput): Promise<DocumentRecord>;
   /** Replace the set of linked application IDs on a document. */
   updateDocumentLinks(id: string, userId: string, applicationIds: string[]): Promise<DocumentRecord>;
+  /** Rename the user-facing original name of a document. */
+  renameDocument(id: string, userId: string, newName: string): Promise<DocumentRecord | null>;
   /** Delete document record. Returns the record (for filename cleanup) or null. */
   deleteDocument(id: string, userId: string): Promise<DocumentRecord | null>;
 

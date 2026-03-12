@@ -334,6 +334,23 @@ export class FirestoreAdapter implements DatabaseAdapter {
     return rec;
   }
 
+  async renameDocument(id: string, userId: string, newName: string): Promise<DocumentRecord | null> {
+    const ref = this.docs.doc(id);
+    const existing = await ref.get();
+    if (!existing.exists || existing.data()!.userId !== userId) return null;
+    await ref.update({ originalName: newName });
+    const updated = await ref.get();
+    const rec = mapDoc(id, updated.data()!);
+    const appIds: string[] = updated.data()!.applicationIds ?? [];
+    if (appIds.length > 0) {
+      const appMap = await this.loadAppRefs(appIds);
+      rec.applications = appIds.map((aid) => appMap.get(aid)).filter((a): a is NonNullable<typeof a> => !!a);
+    } else {
+      rec.applications = [];
+    }
+    return rec;
+  }
+
   async deleteDocument(id: string, userId: string): Promise<DocumentRecord | null> {
     const ref = this.docs.doc(id);
     const existing = await ref.get();
