@@ -219,6 +219,22 @@
       "unknown": "Unbekannt"
     }
   },
+  "analytics": {
+    "title": "Auswertungen",
+    "status_breakdown": "Status-Verteilung",
+    "over_time": "Bewerbungen im Zeitverlauf",
+    "response_rate": "Antwortquote",
+    "avg_response_time": "Durchschnittliche Antwortzeit",
+    "top_companies": "Top-Unternehmen",
+    "source_breakdown": "Quellen-Verteilung",
+    "back_to_dashboard": "Zurück zum Dashboard",
+    "no_data": "Noch keine Daten vorhanden.",
+    "week": "Woche",
+    "applications": "Bewerbungen",
+    "response_rate_desc": "Anteil der Bewerbungen, die eine Antwort erhalten haben (Interview, Angebot oder Absage).",
+    "avg_response_desc": "Durchschnittliche Tage zwischen Bewerbungsdatum und erster Antwort.",
+    "days": "Tage"
+  },
   "token": {
     "title": "API-Token",
     "description": "Persönlichen API-Token für LLM-Integrationen generieren.",
