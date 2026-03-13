@@ -29,6 +29,16 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const parsedSalaryMin = salaryMin != null ? parseInt(String(salaryMin), 10) : null;
+  const parsedSalaryMax = salaryMax != null ? parseInt(String(salaryMax), 10) : null;
+
+  if (parsedSalaryMin != null && parsedSalaryMax != null && parsedSalaryMin > parsedSalaryMax) {
+    return NextResponse.json(
+      { error: "salaryMin must not exceed salaryMax" },
+      { status: 400 }
+    );
+  }
+
   const application = await getDb().createApplication(auth.userId, {
     company: String(company).slice(0, 255),
     role: String(role).slice(0, 255),
@@ -40,9 +50,9 @@ export async function POST(request: NextRequest) {
     jobDescription: jobDescription ? String(jobDescription).slice(0, 50000) : null,
     source: source ? String(source).slice(0, 100) : null,
     remote: !!remote,
-    salaryMin: salaryMin != null ? Math.round(Number(salaryMin)) : null,
-    salaryMax: salaryMax != null ? Math.round(Number(salaryMax)) : null,
-    rating: rating != null ? Math.min(5, Math.max(1, Math.round(Number(rating)))) : null,
+    salaryMin: parsedSalaryMin,
+    salaryMax: parsedSalaryMax,
+    rating: rating != null ? Math.min(5, Math.max(1, parseInt(String(rating), 10))) : null,
   });
 
   return NextResponse.json(application, { status: 201 });

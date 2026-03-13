@@ -35,6 +35,15 @@ export async function PATCH(
   const body = await request.json();
   const { company, role, status, appliedAt, lastContact, followUpAt, notes, jobDescription, source, remote, salaryMin, salaryMax, rating, resumeId, archivedAt } = body;
 
+  const parsedSalaryMin = salaryMin != null ? parseInt(String(salaryMin), 10) : null;
+  const parsedSalaryMax = salaryMax != null ? parseInt(String(salaryMax), 10) : null;
+  if (parsedSalaryMin != null && parsedSalaryMax != null && parsedSalaryMin > parsedSalaryMax) {
+    return NextResponse.json(
+      { error: "salaryMin must not exceed salaryMax" },
+      { status: 400 }
+    );
+  }
+
   const application = await getDb().updateApplication(id, auth.userId, {
     ...(company !== undefined && { company: String(company).slice(0, 255) }),
     ...(role !== undefined && { role: String(role).slice(0, 255) }),
@@ -56,14 +65,10 @@ export async function PATCH(
       source: source ? String(source).slice(0, 100) : null,
     }),
     ...(remote !== undefined && { remote: !!remote }),
-    ...(salaryMin !== undefined && {
-      salaryMin: salaryMin != null ? Math.round(Number(salaryMin)) : null,
-    }),
-    ...(salaryMax !== undefined && {
-      salaryMax: salaryMax != null ? Math.round(Number(salaryMax)) : null,
-    }),
+    ...(salaryMin !== undefined && { salaryMin: parsedSalaryMin }),
+    ...(salaryMax !== undefined && { salaryMax: parsedSalaryMax }),
     ...(rating !== undefined && {
-      rating: rating != null ? Math.min(5, Math.max(1, Math.round(Number(rating)))) : null,
+      rating: rating != null ? Math.min(5, Math.max(1, parseInt(String(rating), 10))) : null,
     }),
     ...(resumeId !== undefined && {
       resumeId: resumeId ? String(resumeId).slice(0, 255) : null,
